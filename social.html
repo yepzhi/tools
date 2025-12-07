@@ -101,14 +101,19 @@
             box-shadow: 0 4px 20px rgba(102, 126, 234, 0.4);
         }
 
-        .search-input-group {
+        .search-controls {
             display: flex;
             gap: 12px;
-            margin-bottom: 24px;
+            margin-bottom: 12px;
+        }
+
+        .search-input-wrapper {
+            flex: 1;
+            position: relative;
         }
 
         .search-input {
-            flex: 1;
+            width: 100%;
             padding: 18px 24px;
             border-radius: 28px;
             border: 1px solid rgba(255, 255, 255, 0.08);
@@ -116,6 +121,18 @@
             color: white;
             font-size: 1em;
             outline: none;
+        }
+
+        .depth-select {
+            background: rgba(255, 255, 255, 0.04);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            color: white;
+            border-radius: 28px;
+            padding: 0 24px;
+            outline: none;
+            appearance: none;
+            cursor: pointer;
+            min-width: 140px;
         }
 
         .search-btn {
@@ -131,6 +148,32 @@
 
         .search-btn:hover {
             transform: translateY(-2px);
+        }
+
+        /* Modern Alert */
+        .status-alert {
+            display: none;
+            margin-top: 20px;
+            padding: 16px;
+            background: rgba(255, 193, 7, 0.1);
+            border: 1px solid rgba(255, 193, 7, 0.3);
+            border-radius: 16px;
+            font-size: 0.9em;
+            color: rgba(255, 255, 255, 0.9);
+            text-align: center;
+            animation: fadeIn 0.5s ease;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(-10px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
         }
 
         .loading {
@@ -159,11 +202,14 @@
             display: grid;
             grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
             gap: 12px;
+            margin-top: 20px;
         }
 
         .result-card {
             padding: 16px;
-            margin-bottom: 0;
+            background: rgba(255, 255, 255, 0.03);
+            border-radius: 12px;
+            border: 1px solid rgba(255, 255, 255, 0.05);
             display: flex;
             flex-direction: column;
             justify-content: space-between;
@@ -203,14 +249,14 @@
         .badge-good {
             background: rgba(46, 213, 115, 0.15);
             color: #2ed573;
-            padding: 8px 20px;
+            padding: 4px 12px;
             border-radius: 24px;
         }
 
         .badge-maybe {
             background: rgba(255, 193, 7, 0.15);
             color: #ffc107;
-            padding: 8px 20px;
+            padding: 4px 12px;
             border-radius: 24px;
         }
 
@@ -235,6 +281,7 @@
             margin-bottom: 24px;
             display: none;
             box-shadow: inset 0 0 20px rgba(0, 255, 0, 0.1);
+            margin-top: 20px;
         }
 
         .log-line {
@@ -277,8 +324,21 @@
                 font-size: 2em;
             }
 
-            .search-input-group {
+            /* Mobile Layout: Vertical Stacking */
+            .search-controls {
                 flex-direction: column;
+                gap: 16px;
+            }
+
+            .search-input,
+            .depth-select,
+            .search-btn {
+                width: 100%;
+                padding: 18px;
+            }
+
+            .search-tabs {
+                flex-wrap: wrap;
             }
         }
     </style>
@@ -292,7 +352,7 @@
             style="color: rgba(255,255,255,0.7); text-decoration: none; display: flex; align-items: center; gap: 8px; font-weight: 500; transition: color 0.2s;">
             <span>‹</span> Back to Home
         </a>
-        <div style="font-weight: 700; font-size: 1.2em; color: rgba(255,255,255,0.9);">Yepzhi Tools</div>
+        <div style="font-weight: 700; font-size: 1.2em; color: rgba(255,255,255,0.9);">@Yepzhi Tools✨</div>
     </div>
 
     <!-- Modules Navigation -->
@@ -315,14 +375,6 @@
     </div>
 
     <div class="glass-container">
-        <!-- Startup Warning -->
-        <div
-            style="background: rgba(255, 193, 7, 0.1); border-left: 4px solid #ffc107; padding: 12px 20px; border-radius: 8px; margin-bottom: 32px; font-size: 0.9em; line-height: 1.5;">
-            <strong style="color: #ffc107; display: block; margin-bottom: 4px;">⚠️ Backend Starting Time</strong>
-            The Hugging Face Space backend may take <strong>up to 20 minutes</strong> to wake up from sleep mode. If
-            searches fail initially, please wait a moment and try again.
-        </div>
-
         <div class="header" style="margin-bottom: 30px;">
             <h1>OSINT Social Analyzer</h1>
             <p>Deep profile search across social networks</p>
@@ -335,12 +387,11 @@
             <button class="tab-btn" data-type="phone" onclick="updatePlaceholder('phone')">📱 Phone</button>
         </div>
 
-        <div style="display: flex; gap: 12px; margin-bottom: 12px;">
-            <div style="flex: 1; position: relative;">
-                <input type="text" id="searchInput" class="search-input" placeholder="e.g. yepiz" style="width: 100%;">
+        <div class="search-controls">
+            <div class="search-input-wrapper">
+                <input type="text" id="searchInput" class="search-input" placeholder="e.g. johndoe">
             </div>
-            <select id="depthSelector"
-                style="background: rgba(255, 255, 255, 0.04); border: 1px solid rgba(255, 255, 255, 0.08); color: white; border-radius: 28px; padding: 0 24px; outline: none; appearance: none; cursor: pointer; min-width: 140px;">
+            <select id="depthSelector" class="depth-select">
                 <option value="100" style="background: #333;">Top 100 Sites</option>
                 <option value="500" style="background: #333;">Top 500 Sites</option>
                 <option value="1000" style="background: #333;">All 1000 Sites</option>
@@ -350,8 +401,15 @@
 
         <!-- Input Guidelines -->
         <div id="inputHint"
-            style="font-size: 0.85em; color: rgba(255, 255, 255, 0.5); padding-left: 24px; margin-bottom: 24px;">
-            💡 Tip: Enter the exact username you want to find (e.g. "john.doe").
+            style="font-size: 0.85em; color: rgba(255, 255, 255, 0.5); padding-left: 24px; margin-bottom: 12px;">
+            💡 Tip: Enter the exact username you want to find (e.g. "johndoe").
+        </div>
+
+        <!-- Modern Status Alert -->
+        <div id="statusAlert" class="status-alert">
+            <strong>⚠️ Backend Status</strong><br>
+            The backend engine may be asleep. If the search takes too long or fails, it might need up to <strong>20
+                minutes</strong> to wake up.
         </div>
 
         <!-- Visualizer -->
@@ -372,6 +430,7 @@
     <script>
         const API_URL = 'https://yepzhi-tools.hf.space';
         let searchType = 'username';
+        let hasShownAlert = false;
 
         // Initialize Counter
         let searchCount = localStorage.getItem('searchCount') || 0;
@@ -382,6 +441,7 @@
                 document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
                 this.classList.add('active');
                 searchType = this.dataset.type;
+                updatePlaceholder(searchType); // Update placeholder when tab changes
             });
         });
 
@@ -390,13 +450,13 @@
             const hint = document.getElementById('inputHint');
 
             if (type === 'username') {
-                input.placeholder = "e.g. yepiz";
-                hint.innerHTML = '💡 Tip: Enter the exact username without @ symbol (e.g. "john_doe").';
+                input.placeholder = "e.g. johndoe";
+                hint.innerHTML = '💡 Tip: Enter the exact username without @ symbol (e.g. "johndoe").';
             } else if (type === 'email') {
-                input.placeholder = "e.g. name@example.com";
+                input.placeholder = "e.g. user@example.com";
                 hint.innerHTML = '💡 Tip: Ensure valid email format (e.g. "user@gmail.com").';
             } else if (type === 'phone') {
-                input.placeholder = "e.g. 1234567890";
+                input.placeholder = "e.g. 5512345678";
                 hint.innerHTML = '💡 Tip: Enter 10-digit phone number without country code or dashes.';
             }
         }
@@ -419,7 +479,7 @@
 
             if (!query) { alert('Please enter a search term'); return; }
 
-            // Basic Validation
+            // Validation
             if (searchType === 'email' && !query.includes('@')) {
                 alert('Please enter a valid email address.');
                 return;
@@ -427,6 +487,12 @@
             if (searchType === 'phone' && !/^\d{10}$/.test(query.replace(/\D/g, ''))) {
                 alert('Please enter a 10-digit phone number.');
                 return;
+            }
+
+            // Show backend status alert on first search
+            if (!hasShownAlert) {
+                document.getElementById('statusAlert').style.display = 'block';
+                hasShownAlert = true;
             }
 
             // Reset UI
@@ -439,7 +505,7 @@
             log(`Depth: Checking top ${depth} sites...`);
             log(`Connecting to backend node...`);
 
-            // Simulate "Scanning" effect
+            // Simulate "Scanning"
             const sites = ['GitHub', 'Twitter', 'Instagram', 'Facebook', 'Reddit', 'TikTok', 'Pinterest', 'GitLab'];
             let scanInterval = setInterval(() => {
                 const randomSite = sites[Math.floor(Math.random() * sites.length)];
@@ -453,7 +519,7 @@
                     body: JSON.stringify({
                         username: query,
                         mode: 'fast',
-                        limit: parseInt(depth) // Sending depth to backend
+                        limit: parseInt(depth)
                     })
                 });
 
@@ -476,14 +542,19 @@
             } catch (error) {
                 clearInterval(scanInterval);
                 log(`ERROR: ${error.message}`, 'error');
-                log(`NOTE: If this is the first request in a while, the server might be waking up (20min delay).`, 'error');
+                log(`NOTE: Server might be waking up (20min delay).`, 'error');
+
+                document.getElementById('statusAlert').innerHTML = `
+                    <strong style="color: #ff4757">Connection Warning</strong><br>
+                    The search failed. If the backend is waking up, please wait 5-10 minutes and try again.<br>
+                    <span style="font-size:0.8em; opacity:0.7">Error: ${error.message}</span>
+                `;
+                document.getElementById('statusAlert').style.display = 'block'; // Ensure visible on error
 
                 document.getElementById('resultsContainer').innerHTML = `
                     <div style="text-align:center; padding: 20px; grid-column: 1/-1;">
-                        <h3 style="color: #ff4757">Connection Failed</h3>
-                        <p style="color: #ccc; margin-top: 10px;">Could not connect to the backend.</p>
-                        <p style="font-size: 0.8em; color: #666;">${error.message}</p>
-                        <p style="font-size: 0.8em; color: #ffc107; margin-top: 10px;">Is the Hugging Face Space awake?</p>
+                        <h3 style="color: #ff4757">Search Interrupted</h3>
+                        <p style="color: #ccc;">Backend connection failed.</p>
                     </div>
                 `;
             }

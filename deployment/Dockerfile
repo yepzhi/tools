@@ -3,7 +3,7 @@ FROM python:3.9-slim
 
 # Set environment variables
 ENV HOST=0.0.0.0
-ENV PORT=9005
+ENV PORT=7860
 ENV DEBIAN_FRONTEND=noninteractive
 
 # Install system dependencies
@@ -31,7 +31,7 @@ RUN chown -R user:user /app
 USER user
 
 # Expose the port
-EXPOSE 9005
+EXPOSE 7860
 
 # Start the application using npm start (which runs the web server)
 CMD ["npm", "start"]
