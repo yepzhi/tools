@@ -33,5 +33,5 @@ USER user
 # Expose the port
 EXPOSE 7860
 
-# Start the application using npm start (which runs the web server)
-CMD ["npm", "start"]
+# Start the application directly with node to pass the --docker flag (forces 0.0.0.0 binding)
+CMD ["node", "app.js", "--gui", "--docker"]
