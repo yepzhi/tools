@@ -490,12 +490,6 @@
                 return;
             }
 
-            // Show backend status alert on first search
-            if (!hasShownAlert) {
-                document.getElementById('statusAlert').style.display = 'block';
-                hasShownAlert = true;
-            }
-
             // Reset UI
             document.getElementById('resultsContainer').innerHTML = '';
             document.getElementById('processLog').innerHTML = '';
@@ -548,7 +542,8 @@
                 localStorage.setItem('searchCount', searchCount);
                 document.getElementById('searchCounter').innerText = searchCount;
 
-                log(`Analysis complete. Found ${results.length} results.`, 'success');
+                log(`Analysis complete.`, 'success');
+                log(`Processed ${results.length} sites.`, 'success');
                 displayResults(results, query);
 
             } catch (error) {
@@ -556,17 +551,11 @@
                 log(`ERROR: ${error.message}`, 'error');
                 log(`NOTE: Server might be waking up (20min delay).`, 'error');
 
-                document.getElementById('statusAlert').innerHTML = `
-                    <strong style="color: #ff4757">Connection Warning</strong><br>
-                    The search failed. If the backend is waking up, please wait 5-10 minutes and try again.<br>
-                    <span style="font-size:0.8em; opacity:0.7">Error: ${error.message}</span>
-                `;
-                document.getElementById('statusAlert').style.display = 'block'; // Ensure visible on error
-
                 document.getElementById('resultsContainer').innerHTML = `
                     <div style="text-align:center; padding: 20px; grid-column: 1/-1;">
                         <h3 style="color: #ff4757">Search Interrupted</h3>
                         <p style="color: #ccc;">Backend connection failed.</p>
+                        <p style="font-size: 0.8em; opacity: 0.7; margin-top: 10px;">If this is the first search, the server is likely waking up. Please wait 2-3 minutes and try again.</p>
                     </div>
                 `;
             }
@@ -578,30 +567,58 @@
                 return;
             }
 
-            let html = '';
-            results.forEach(r => {
-                // Adapt fields based on app.js output
-                // { url: ..., rate: ..., good: 'true'/'false', ... }
-                // Sometimes 'site' name isn't explicit, might need extraction from URL or checking other fields
-                const link = r.url || r.link;
-                const siteName = r.site || (new URL(link).hostname.replace('www.', ''));
-                const isGood = r.good === 'true' || r.rate > 50;
-                const badge = isGood ? 'good' : 'maybe';
-                const score = r.rate ? `${r.rate}%` : (isGood ? 'Found' : '?');
+            // Categorize results
+            const highConfidence = results.filter(r => r.good === 'true' || r.rate >= 50);
+            const lowConfidence = results.filter(r => r.good !== 'true' && (r.rate < 50 || !r.rate));
 
-                html += `
-                    <div class="result-card">
-                        <div class="result-header">
-                            <div class="result-title" title="${siteName}">${siteName}</div>
-                            <div class="badge-${badge}" style="font-size: 0.8em; padding: 4px 12px;">${score}</div>
-                        </div>
-                        <a href="${link}" target="_blank" class="result-link">${link}</a>
-                    </div>
-                `;
-            });
+            let html = `
+                <div style="grid-column: 1/-1; margin-bottom: 10px; padding: 10px; background: rgba(255,255,255,0.05); border-radius: 12px;">
+                     <h3 style="margin-bottom: 5px;">Analysis Report</h3>
+                     <p style="font-size: 0.9em; opacity: 0.8;">
+                        <strong>Total Sites Checked:</strong> ${results.length}<br>
+                        <strong>Confirmed Matches:</strong> ${highConfidence.length}<br>
+                        <strong>Potential/Low Confidence:</strong> ${lowConfidence.length}
+                     </p>
+                </div>
+            `;
+
+            if (highConfidence.length > 0) {
+                html += `<h4 style="grid-column: 1/-1; margin-top: 10px; color: #2ed573;">✅ High Confidence Matches</h4>`;
+                highConfidence.forEach(r => html += createResultCard(r));
+            }
+
+            if (lowConfidence.length > 0) {
+                html += `<h4 style="grid-column: 1/-1; margin-top: 20px; color: #ffc107; border-top: 1px solid rgba(255,255,255,0.1); padding-top: 20px;">⚠️ Unverified / Low Probability</h4>`;
+                lowConfidence.forEach(r => html += createResultCard(r));
+            }
+
             document.getElementById('resultsContainer').innerHTML = html;
+        }
+
+        function createResultCard(r) {
+            const link = r.url || r.link;
+            const siteName = r.site || (new URL(link).hostname.replace('www.', ''));
+            const isGood = r.good === 'true' || r.rate > 50;
+            const badge = isGood ? 'good' : 'maybe';
+            const score = r.rate ? `${r.rate}%` : (isGood ? 'Found' : '?');
+            const category = r.type || 'Social';
+            const country = r.country ? r.country.toUpperCase() : 'Global';
+
+            return `
+                <div class="result-card">
+                    <div class="result-header">
+                        <div class="result-title" title="${siteName}">${siteName}</div>
+                        <div class="badge-${badge}" style="font-size: 0.8em; padding: 4px 12px;">${score}</div>
+                    </div>
+                    <div style="font-size: 0.75em; color: rgba(255,255,255,0.4); margin-bottom: 8px;">
+                        ${category} • ${country}
+                    </div>
+                    <a href="${link}" target="_blank" class="result-link">${link}</a>
+                </div>
+            `;
         }
     </script>
 </body>
 
 </html>
+```
