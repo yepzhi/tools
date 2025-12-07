@@ -475,8 +475,7 @@
 
         async function performSearch() {
             const query = document.getElementById('searchInput').value.trim();
-            // Depth selector is visually kept but backend defaults to configured sites for now
-            // const depth = document.getElementById('depthSelector').value;
+            const depth = parseInt(document.getElementById('depthSelector').value);
 
             if (!query) { alert('Please enter a search term'); return; }
 
@@ -503,18 +502,55 @@
             // Start Visualizer
             log(`Initializing search for "${query}"...`);
             log(`Target: ${searchType}`);
+            log(`Depth: Top ${depth} sites`);
             log(`UUID: ${uuid}`);
-            log(`Connecting to backend node...`);
-
-            // Simulate "Scanning"
-            const sites = ['GitHub', 'Twitter', 'Instagram', 'Facebook', 'Reddit', 'TikTok', 'Pinterest', 'GitLab'];
-            let scanInterval = setInterval(() => {
-                const randomSite = sites[Math.floor(Math.random() * sites.length)];
-                log(`Scanning ${randomSite}...`);
-            }, 1000);
 
             try {
-                // Use the correct endpoint /analyze_string
+                // Step 1: Configure Backend for Depth
+                log(`Retrieving site list...`);
+                const settingsResponse = await fetch(`${API_URL}/get_settings`);
+                if (!settingsResponse.ok) throw new Error('Failed to fetch settings');
+                const settings = await settingsResponse.json();
+
+                log(`Configuring search scope...`);
+
+                // Sort by global_rank (if available, otherwise fallback to index or default)
+                // Filter out bad status
+                let sites = settings.websites || [];
+
+                // Sort: 0 is usually top rank. Handle missing ranks.
+                sites.sort((a, b) => (a.global_rank || 999999) - (b.global_rank || 999999));
+
+                // Slice top N
+                const selectedSites = sites.slice(0, depth);
+                const inputIds = selectedSites.map(s => s.index).join(',');
+
+                // Step 2: Save Selection
+                const saveResponse = await fetch(`${API_URL}/save_settings`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        websites: inputIds,
+                        // Maintain other defaults to avoid breaking things
+                        google_key: settings.google && settings.google[0] ? settings.google[0] : '',
+                        google_cv: settings.google && settings.google[1] ? settings.google[1] : '',
+                        user_agent: settings.user_agent,
+                        proxy: settings.proxy
+                    })
+                });
+
+                // Wait a moment for settings to apply
+                log(`Scope configured. Connecting to backend node...`);
+
+                // Simulate "Scanning"
+                // Using selected sites for visualization
+                const sampleSites = selectedSites.slice(0, 10).map(s => s.url);
+                let scanInterval = setInterval(() => {
+                    const randomSite = sampleSites[Math.floor(Math.random() * sampleSites.length)];
+                    log(`Scanning ${randomSite}...`);
+                }, 800);
+
+                // Step 3: Analyze
                 const response = await fetch(`${API_URL}/analyze_string`, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
@@ -533,8 +569,6 @@
 
                 const data = await response.json();
 
-                // Parse results from correct path
-                // app.js returns { user_info_normal: { data: [...] } }
                 const results = data.user_info_normal && data.user_info_normal.data ? data.user_info_normal.data : [];
 
                 // Update Counter
@@ -543,7 +577,7 @@
                 document.getElementById('searchCounter').innerText = searchCount;
 
                 log(`Analysis complete.`, 'success');
-                log(`Processed ${results.length} sites.`, 'success');
+                log(`Processed ${sites.length} available -> ${selectedSites.length} selected -> ${results.length} matches found.`, 'success');
                 displayResults(results, query);
 
             } catch (error) {
@@ -554,8 +588,8 @@
                 document.getElementById('resultsContainer').innerHTML = `
                     <div style="text-align:center; padding: 20px; grid-column: 1/-1;">
                         <h3 style="color: #ff4757">Search Interrupted</h3>
-                        <p style="color: #ccc;">Backend connection failed.</p>
-                        <p style="font-size: 0.8em; opacity: 0.7; margin-top: 10px;">If this is the first search, the server is likely waking up. Please wait 2-3 minutes and try again.</p>
+                        <p style="color: #ccc;">Backend connection failed or timed out.</p>
+                        <p style="font-size: 0.8em; opacity: 0.7; margin-top: 10px;">${error.message}</p>
                     </div>
                 `;
             }
@@ -563,7 +597,7 @@
 
         function displayResults(results, query) {
             if (!results || results.length === 0) {
-                document.getElementById('resultsContainer').innerHTML = '<p style="text-align:center; width:100%">No results found.</p>';
+                document.getElementById('resultsContainer').innerHTML = '<p style="text-align:center; width:100%">No results found (or all timed out).</p>';
                 return;
             }
 
@@ -575,9 +609,9 @@
                 <div style="grid-column: 1/-1; margin-bottom: 10px; padding: 10px; background: rgba(255,255,255,0.05); border-radius: 12px;">
                      <h3 style="margin-bottom: 5px;">Analysis Report</h3>
                      <p style="font-size: 0.9em; opacity: 0.8;">
-                        <strong>Total Sites Checked:</strong> ${results.length}<br>
-                        <strong>Confirmed Matches:</strong> ${highConfidence.length}<br>
-                        <strong>Potential/Low Confidence:</strong> ${lowConfidence.length}
+                        <strong>Matches Found:</strong> ${results.length}<br>
+                        <strong>Confirmed:</strong> ${highConfidence.length}<br>
+                        <strong>Potential:</strong> ${lowConfidence.length}
                      </p>
                 </div>
             `;
@@ -597,7 +631,7 @@
 
         function createResultCard(r) {
             const link = r.url || r.link;
-            const siteName = r.site || (new URL(link).hostname.replace('www.', ''));
+            const siteName = r.url ? (new URL(r.url).hostname.replace('www.', '')) : (r.site || 'Unknown');
             const isGood = r.good === 'true' || r.rate > 50;
             const badge = isGood ? 'good' : 'maybe';
             const score = r.rate ? `${r.rate}%` : (isGood ? 'Found' : '?');
