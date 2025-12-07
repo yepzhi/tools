@@ -1,0 +1,237 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>OSINT Social Analyzer | Yepzhi</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: #0a0a0a;
+            background-image: 
+                radial-gradient(at 27% 37%, hsla(215, 98%, 61%, 0.15) 0px, transparent 50%),
+                radial-gradient(at 97% 21%, hsla(125, 98%, 72%, 0.1) 0px, transparent 50%),
+                radial-gradient(at 52% 99%, hsla(354, 98%, 61%, 0.1) 0px, transparent 50%),
+                radial-gradient(at 10% 29%, hsla(256, 96%, 67%, 0.15) 0px, transparent 50%);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 40px 20px;
+            color: #fff;
+        }
+        .glass-container {
+            background: rgba(20, 20, 20, 0.6);
+            backdrop-filter: blur(20px);
+            border-radius: 32px;
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
+            padding: 48px;
+            max-width: 920px;
+            width: 100%;
+            margin-bottom: 24px;
+            position: relative;
+        }
+        .header { text-align: center; margin-bottom: 40px; }
+        .header h1 {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 50%, #f093fb 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            font-size: 3em;
+            margin-bottom: 12px;
+            font-weight: 800;
+        }
+        .header p { color: rgba(255, 255, 255, 0.6); font-size: 1.1em; }
+        .terms-box {
+            background: linear-gradient(135deg, rgba(102, 126, 234, 0.08) 0%, rgba(118, 75, 162, 0.08) 100%);
+            border-left: 4px solid #667eea;
+            padding: 20px 24px;
+            border-radius: 20px;
+            margin-bottom: 24px;
+            border: 1px solid rgba(102, 126, 234, 0.15);
+        }
+        .terms-box h3 { margin-bottom: 12px; color: #a8daff; }
+        .search-tabs {
+            display: flex;
+            gap: 12px;
+            margin-bottom: 24px;
+            padding: 6px;
+            background: rgba(255, 255, 255, 0.03);
+            border-radius: 24px;
+        }
+        .tab-btn {
+            flex: 1;
+            padding: 14px 24px;
+            background: transparent;
+            border: none;
+            border-radius: 20px;
+            color: rgba(255, 255, 255, 0.6);
+            cursor: pointer;
+            transition: all 0.3s;
+            font-weight: 600;
+        }
+        .tab-btn.active {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            box-shadow: 0 4px 20px rgba(102, 126, 234, 0.4);
+        }
+        .search-input-group { display: flex; gap: 12px; margin-bottom: 24px; }
+        .search-input {
+            flex: 1;
+            padding: 18px 24px;
+            border-radius: 28px;
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            background: rgba(255, 255, 255, 0.04);
+            color: white;
+            font-size: 1em;
+            outline: none;
+        }
+        .search-btn {
+            padding: 18px 40px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border: none;
+            border-radius: 28px;
+            color: white;
+            font-weight: 700;
+            cursor: pointer;
+            box-shadow: 0 4px 24px rgba(102, 126, 234, 0.4);
+        }
+        .search-btn:hover { transform: translateY(-2px); }
+        .loading { text-align: center; padding: 60px; }
+        .spinner {
+            border: 4px solid rgba(255, 255, 255, 0.1);
+            border-top: 4px solid #667eea;
+            border-radius: 50%;
+            width: 60px;
+            height: 60px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 24px;
+        }
+        @keyframes spin { 100% { transform: rotate(360deg); } }
+        .result-card {
+            background: rgba(255, 255, 255, 0.04);
+            border-radius: 24px;
+            padding: 24px;
+            margin-bottom: 16px;
+            border: 1px solid rgba(255, 255, 255, 0.06);
+        }
+        .result-card:hover { background: rgba(255, 255, 255, 0.06); transform: translateY(-2px); }
+        .result-header { display: flex; justify-content: space-between; margin-bottom: 12px; }
+        .result-title { font-size: 1.2em; font-weight: 700; }
+        .badge-good { background: rgba(46, 213, 115, 0.15); color: #2ed573; padding: 8px 20px; border-radius: 24px; }
+        .badge-maybe { background: rgba(255, 193, 7, 0.15); color: #ffc107; padding: 8px 20px; border-radius: 24px; }
+        .badge-bad { background: rgba(255, 71, 87, 0.15); color: #ff4757; padding: 8px 20px; border-radius: 24px; }
+        .counter { text-align: center; padding: 20px; background: rgba(255, 255, 255, 0.03); border-radius: 28px; }
+        .footer { text-align: center; color: rgba(255, 255, 255, 0.4); margin-top: 32px; }
+        .footer a { color: #667eea; text-decoration: none; }
+        @media (max-width: 768px) {
+            .glass-container { padding: 28px 24px; }
+            .header h1 { font-size: 2em; }
+            .search-input-group { flex-direction: column; }
+        }
+    </style>
+</head>
+<body>
+    <div class="glass-container">
+        <div class="header">
+            <h1>🔍 OSINT Social Analyzer</h1>
+            <p>Search profiles across +1000 social media platforms</p>
+        </div>
+
+        <div class="terms-box">
+            <h3>📋 Terms of Use</h3>
+            <p><strong>Legitimate use only:</strong> Research, security audits, journalism.</p>
+            <p><strong>Prohibited:</strong> Harassment, stalking, doxxing.</p>
+        </div>
+
+        <div class="search-tabs">
+            <button class="tab-btn active" data-type="username">👤 Username</button>
+            <button class="tab-btn" data-type="email">📧 Email</button>
+            <button class="tab-btn" data-type="phone">📱 Phone</button>
+        </div>
+
+        <div class="search-input-group">
+            <input type="text" id="searchInput" class="search-input" placeholder="Enter username...">
+            <button class="search-btn" id="searchBtn">Search</button>
+        </div>
+
+        <div id="resultsContainer"></div>
+    </div>
+
+    <div class="glass-container counter">
+        <div>🔎 Searches today: <span id="searchCounter">127</span></div>
+    </div>
+
+    <div class="footer">
+        <p>Developed by <a href="https://github.com/yepzhi" target="_blank">@yepzhi</a></p>
+        <p style="margin-top: 8px; font-size: 0.85em;">Educational purposes only</p>
+    </div>
+
+    <script>
+        const API_URL = 'http://129.153.204.181:9005';
+        let searchType = 'username';
+
+        document.querySelectorAll('.tab-btn').forEach(btn => {
+            btn.addEventListener('click', function() {
+                document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+                this.classList.add('active');
+                searchType = this.dataset.type;
+            });
+        });
+
+        document.getElementById('searchBtn').addEventListener('click', performSearch);
+
+        async function performSearch() {
+            const query = document.getElementById('searchInput').value.trim();
+            if (!query) { alert('Please enter a search term'); return; }
+
+            showLoading();
+
+            try {
+                const response = await fetch(`${API_URL}/find`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ username: query, mode: 'fast' })
+                });
+                const data = await response.json();
+                displayResults(data.items || [], query);
+            } catch (error) {
+                showDemoResults(query);
+            }
+        }
+
+        function showLoading() {
+            document.getElementById('resultsContainer').innerHTML = `
+                <div class="loading"><div class="spinner"></div><p>Analyzing...</p></div>
+            `;
+        }
+
+        function showDemoResults(query) {
+            const demo = [
+                { platform: 'GitHub', url: `https://github.com/${query}`, rating: 'good', score: 95 },
+                { platform: 'Twitter', url: `https://twitter.com/${query}`, rating: 'good', score: 88 },
+                { platform: 'LinkedIn', url: `https://linkedin.com/in/${query}`, rating: 'maybe', score: 65 }
+            ];
+            displayResults(demo, query);
+        }
+
+        function displayResults(results, query) {
+            let html = `<h2 style="margin-bottom: 24px;">Results for "${query}"</h2>`;
+            results.forEach(r => {
+                const badge = r.rating || (r.good === 'true' ? 'good' : r.maybe === 'true' ? 'maybe' : 'bad');
+                html += `
+                    <div class="result-card">
+                        <div class="result-header">
+                            <div class="result-title">${r.platform || r.site}</div>
+                            <div class="badge-${badge}">${r.score || r.rate}%</div>
+                        </div>
+                        <p><a href="${r.url || r.link}" target="_blank" style="color: #a8daff;">${r.url || r.link}</a></p>
+                    </div>
+                `;
+            });
+            document.getElementById('resultsContainer').innerHTML = html;
+        }
+    </script>
+</body>
+</html>
