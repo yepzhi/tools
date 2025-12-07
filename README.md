@@ -12,7 +12,7 @@ The backend is currently hosted on **Hugging Face Spaces**: `https://yepzhi-tool
 
 ## Setup
 1. Clone the repository
-2. Open `index.html` in your browser (or visit the GitHub Pages link)
+2. Open `social.html` in your browser (or visit the GitHub Pages link which redirects to it)
 
 ## Usage
 Enter a username and click Search. The app will connect to the live backend to fetch results.

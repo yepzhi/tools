@@ -1,0 +1,434 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>OSINT Social Analyzer | Yepzhi</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: #0a0a0a;
+            background-image:
+                radial-gradient(at 27% 37%, hsla(215, 98%, 61%, 0.15) 0px, transparent 50%),
+                radial-gradient(at 97% 21%, hsla(125, 98%, 72%, 0.1) 0px, transparent 50%),
+                radial-gradient(at 52% 99%, hsla(354, 98%, 61%, 0.1) 0px, transparent 50%),
+                radial-gradient(at 10% 29%, hsla(256, 96%, 67%, 0.15) 0px, transparent 50%);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 40px 20px;
+            color: #fff;
+        }
+
+        .glass-container {
+            background: rgba(20, 20, 20, 0.6);
+            backdrop-filter: blur(20px);
+            border-radius: 32px;
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
+            padding: 48px;
+            max-width: 920px;
+            width: 100%;
+            margin-bottom: 24px;
+            position: relative;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 40px;
+        }
+
+        .header h1 {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 50%, #f093fb 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            font-size: 3em;
+            margin-bottom: 12px;
+            font-weight: 800;
+        }
+
+        .header p {
+            color: rgba(255, 255, 255, 0.6);
+            font-size: 1.1em;
+        }
+
+        .terms-box {
+            background: linear-gradient(135deg, rgba(102, 126, 234, 0.08) 0%, rgba(118, 75, 162, 0.08) 100%);
+            border-left: 4px solid #667eea;
+            padding: 20px 24px;
+            border-radius: 20px;
+            margin-bottom: 24px;
+            border: 1px solid rgba(102, 126, 234, 0.15);
+        }
+
+        .terms-box h3 {
+            margin-bottom: 12px;
+            color: #a8daff;
+        }
+
+        .search-tabs {
+            display: flex;
+            gap: 12px;
+            margin-bottom: 24px;
+            padding: 6px;
+            background: rgba(255, 255, 255, 0.03);
+            border-radius: 24px;
+        }
+
+        .tab-btn {
+            flex: 1;
+            padding: 14px 24px;
+            background: transparent;
+            border: none;
+            border-radius: 20px;
+            color: rgba(255, 255, 255, 0.6);
+            cursor: pointer;
+            transition: all 0.3s;
+            font-weight: 600;
+        }
+
+        .tab-btn.active {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            box-shadow: 0 4px 20px rgba(102, 126, 234, 0.4);
+        }
+
+        .search-input-group {
+            display: flex;
+            gap: 12px;
+            margin-bottom: 24px;
+        }
+
+        .search-input {
+            flex: 1;
+            padding: 18px 24px;
+            border-radius: 28px;
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            background: rgba(255, 255, 255, 0.04);
+            color: white;
+            font-size: 1em;
+            outline: none;
+        }
+
+        .search-btn {
+            padding: 18px 40px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border: none;
+            border-radius: 28px;
+            color: white;
+            font-weight: 700;
+            cursor: pointer;
+            box-shadow: 0 4px 24px rgba(102, 126, 234, 0.4);
+        }
+
+        .search-btn:hover {
+            transform: translateY(-2px);
+        }
+
+        .loading {
+            text-align: center;
+            padding: 60px;
+        }
+
+        .spinner {
+            border: 4px solid rgba(255, 255, 255, 0.1);
+            border-top: 4px solid #667eea;
+            border-radius: 50%;
+            width: 60px;
+            height: 60px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 24px;
+        }
+
+        @keyframes spin {
+            100% {
+                transform: rotate(360deg);
+            }
+        }
+
+        /* Compact Grid Layout */
+        #resultsContainer {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: 12px;
+        }
+
+        .result-card {
+            padding: 16px;
+            margin-bottom: 0;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            font-size: 0.9em;
+        }
+
+        .result-card:hover {
+            background: rgba(255, 255, 255, 0.06);
+            transform: translateY(-2px);
+        }
+
+        .result-header {
+            margin-bottom: 8px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .result-title {
+            font-size: 1em;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .result-link {
+            font-size: 0.85em;
+            color: #a8daff;
+            text-decoration: none;
+            word-break: break-all;
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+        }
+
+        .badge-good {
+            background: rgba(46, 213, 115, 0.15);
+            color: #2ed573;
+            padding: 8px 20px;
+            border-radius: 24px;
+        }
+
+        .badge-maybe {
+            background: rgba(255, 193, 7, 0.15);
+            color: #ffc107;
+            padding: 8px 20px;
+            border-radius: 24px;
+        }
+
+        .badge-bad {
+            background: rgba(255, 71, 87, 0.15);
+            color: #ff4757;
+            padding: 8px 20px;
+            border-radius: 24px;
+        }
+
+        /* Process Visualizer */
+        .log-window {
+            background: #000;
+            border: 1px solid #333;
+            border-radius: 12px;
+            padding: 16px;
+            font-family: 'Courier New', monospace;
+            font-size: 0.85em;
+            color: #0f0;
+            height: 150px;
+            overflow-y: auto;
+            margin-bottom: 24px;
+            display: none;
+            box-shadow: inset 0 0 20px rgba(0, 255, 0, 0.1);
+        }
+
+        .log-line {
+            margin-bottom: 4px;
+            opacity: 0.8;
+        }
+
+        .log-line.error {
+            color: #ff4757;
+        }
+
+        .log-line.success {
+            color: #2ed573;
+        }
+
+        .counter {
+            text-align: center;
+            padding: 20px;
+            background: rgba(255, 255, 255, 0.03);
+            border-radius: 28px;
+        }
+
+        .footer {
+            text-align: center;
+            color: rgba(255, 255, 255, 0.4);
+            margin-top: 32px;
+        }
+
+        .footer a {
+            color: #667eea;
+            text-decoration: none;
+        }
+
+        @media (max-width: 768px) {
+            .glass-container {
+                padding: 28px 24px;
+            }
+
+            .header h1 {
+                font-size: 2em;
+            }
+
+            .search-input-group {
+                flex-direction: column;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="glass-container">
+        <div class="header">
+            <h1>🔍 OSINT Social Analyzer</h1>
+            <p>Search profiles across +1000 social media platforms</p>
+        </div>
+
+        <div class="search-tabs">
+            <button class="tab-btn active" data-type="username">👤 Username</button>
+            <button class="tab-btn" data-type="email">📧 Email</button>
+            <button class="tab-btn" data-type="phone">📱 Phone</button>
+        </div>
+
+        <div class="search-input-group">
+            <input type="text" id="searchInput" class="search-input" placeholder="Enter username...">
+            <button class="search-btn" id="searchBtn">Search</button>
+        </div>
+
+        <!-- Visualizer -->
+        <div id="processLog" class="log-window"></div>
+
+        <div id="resultsContainer"></div>
+    </div>
+
+    <div class="glass-container counter">
+        <div>🔎 Your Searches: <span id="searchCounter">0</span></div>
+    </div>
+
+    <div class="footer">
+        <p>Developed by <a href="https://github.com/yepzhi" target="_blank">@yepzhi</a></p>
+        <p style="margin-top: 8px; font-size: 0.85em;">Educational purposes only</p>
+    </div>
+
+    <script>
+        const API_URL = 'https://yepzhi-tools.hf.space';
+        let searchType = 'username';
+
+        // Initialize Counter
+        let searchCount = localStorage.getItem('searchCount') || 0;
+        document.getElementById('searchCounter').innerText = searchCount;
+
+        document.querySelectorAll('.tab-btn').forEach(btn => {
+            btn.addEventListener('click', function () {
+                document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+                this.classList.add('active');
+                searchType = this.dataset.type;
+            });
+        });
+
+        document.getElementById('searchBtn').addEventListener('click', performSearch);
+
+        function log(message, type = 'info') {
+            const logWindow = document.getElementById('processLog');
+            logWindow.style.display = 'block';
+            const line = document.createElement('div');
+            line.className = `log-line ${type}`;
+            line.innerText = `> ${message}`;
+            logWindow.appendChild(line);
+            logWindow.scrollTop = logWindow.scrollHeight;
+        }
+
+        async function performSearch() {
+            const query = document.getElementById('searchInput').value.trim();
+            if (!query) { alert('Please enter a search term'); return; }
+
+            // Reset UI
+            document.getElementById('resultsContainer').innerHTML = '';
+            document.getElementById('processLog').innerHTML = '';
+
+            // Start Visualizer
+            log(`Initializing search for "${query}"...`);
+            log(`Target: ${searchType}`);
+            log(`Connecting to backend node...`);
+
+            // Simulate "Scanning" effect while waiting
+            const sites = ['GitHub', 'Twitter', 'Instagram', 'Facebook', 'Reddit', 'TikTok', 'Pinterest', 'GitLab'];
+            let scanInterval = setInterval(() => {
+                const randomSite = sites[Math.floor(Math.random() * sites.length)];
+                log(`Scanning ${randomSite}...`);
+            }, 800);
+
+            try {
+                const response = await fetch(`${API_URL}/find`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ username: query, mode: 'fast' })
+                });
+
+                clearInterval(scanInterval);
+
+                if (!response.ok) {
+                    throw new Error(`Server Error: ${response.status} ${response.statusText}`);
+                }
+
+                const data = await response.json();
+
+                // Update Counter
+                searchCount++;
+                localStorage.setItem('searchCount', searchCount);
+                document.getElementById('searchCounter').innerText = searchCount;
+
+                log(`Analysis complete. Found ${data.items ? data.items.length : 0} results.`, 'success');
+                displayResults(data.items || [], query);
+
+            } catch (error) {
+                clearInterval(scanInterval);
+                log(`ERROR: ${error.message}`, 'error');
+                log(`Make sure the Hugging Face Space is running!`, 'error');
+
+                document.getElementById('resultsContainer').innerHTML = `
+                    <div style="text-align:center; padding: 20px; grid-column: 1/-1;">
+                        <h3 style="color: #ff4757">Connection Failed</h3>
+                        <p style="color: #ccc; margin-top: 10px;">Could not connect to the backend.</p>
+                        <p style="font-size: 0.8em; color: #666;">${error.message}</p>
+                    </div>
+                `;
+            }
+        }
+
+        function displayResults(results, query) {
+            if (!results || results.length === 0) {
+                document.getElementById('resultsContainer').innerHTML = '<p style="text-align:center; width:100%">No results found.</p>';
+                return;
+            }
+
+            let html = '';
+            results.forEach(r => {
+                // Filter: Only show "good" or "maybe" results if possible, or just all
+                // User asked for "real results", so we show what the API returns.
+                const badge = r.rate > 50 ? 'good' : 'maybe';
+                const score = r.rate || r.score || '?';
+
+                html += `
+                    <div class="result-card">
+                        <div class="result-header">
+                            <div class="result-title" title="${r.site}">${r.site}</div>
+                            <div class="badge-${badge}" style="font-size: 0.8em; padding: 4px 12px;">${score}%</div>
+                        </div>
+                        <a href="${r.link}" target="_blank" class="result-link">${r.link}</a>
+                    </div>
+                `;
+            });
+            document.getElementById('resultsContainer').innerHTML = html;
+        }
+    </script>
+</body>
+
+</html>
