@@ -475,7 +475,8 @@
 
         async function performSearch() {
             const query = document.getElementById('searchInput').value.trim();
-            const depth = document.getElementById('depthSelector').value;
+            // Depth selector is visually kept but backend defaults to configured sites for now
+            // const depth = document.getElementById('depthSelector').value;
 
             if (!query) { alert('Please enter a search term'); return; }
 
@@ -499,10 +500,16 @@
             document.getElementById('resultsContainer').innerHTML = '';
             document.getElementById('processLog').innerHTML = '';
 
+            // Generate UUID
+            const uuid = 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function (c) {
+                var r = Math.random() * 16 | 0, v = c == 'x' ? r : (r & 0x3 | 0x8);
+                return v.toString(16);
+            });
+
             // Start Visualizer
             log(`Initializing search for "${query}"...`);
             log(`Target: ${searchType}`);
-            log(`Depth: Checking top ${depth} sites...`);
+            log(`UUID: ${uuid}`);
             log(`Connecting to backend node...`);
 
             // Simulate "Scanning"
@@ -510,16 +517,17 @@
             let scanInterval = setInterval(() => {
                 const randomSite = sites[Math.floor(Math.random() * sites.length)];
                 log(`Scanning ${randomSite}...`);
-            }, 800);
+            }, 1000);
 
             try {
-                const response = await fetch(`${API_URL}/find`, {
+                // Use the correct endpoint /analyze_string
+                const response = await fetch(`${API_URL}/analyze_string`, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({
-                        username: query,
-                        mode: 'fast',
-                        limit: parseInt(depth)
+                        string: query,
+                        option: 'FindUserProfilesFast',
+                        uuid: uuid
                     })
                 });
 
@@ -531,13 +539,17 @@
 
                 const data = await response.json();
 
+                // Parse results from correct path
+                // app.js returns { user_info_normal: { data: [...] } }
+                const results = data.user_info_normal && data.user_info_normal.data ? data.user_info_normal.data : [];
+
                 // Update Counter
                 searchCount++;
                 localStorage.setItem('searchCount', searchCount);
                 document.getElementById('searchCounter').innerText = searchCount;
 
-                log(`Analysis complete. Found ${data.items ? data.items.length : 0} results.`, 'success');
-                displayResults(data.items || [], query);
+                log(`Analysis complete. Found ${results.length} results.`, 'success');
+                displayResults(results, query);
 
             } catch (error) {
                 clearInterval(scanInterval);
@@ -568,16 +580,22 @@
 
             let html = '';
             results.forEach(r => {
-                const badge = r.rate > 50 ? 'good' : 'maybe';
-                const score = r.rate || r.score || '?';
+                // Adapt fields based on app.js output
+                // { url: ..., rate: ..., good: 'true'/'false', ... }
+                // Sometimes 'site' name isn't explicit, might need extraction from URL or checking other fields
+                const link = r.url || r.link;
+                const siteName = r.site || (new URL(link).hostname.replace('www.', ''));
+                const isGood = r.good === 'true' || r.rate > 50;
+                const badge = isGood ? 'good' : 'maybe';
+                const score = r.rate ? `${r.rate}%` : (isGood ? 'Found' : '?');
 
                 html += `
                     <div class="result-card">
                         <div class="result-header">
-                            <div class="result-title" title="${r.site}">${r.site}</div>
-                            <div class="badge-${badge}" style="font-size: 0.8em; padding: 4px 12px;">${score}%</div>
+                            <div class="result-title" title="${siteName}">${siteName}</div>
+                            <div class="badge-${badge}" style="font-size: 0.8em; padding: 4px 12px;">${score}</div>
                         </div>
-                        <a href="${r.link}" target="_blank" class="result-link">${r.link}</a>
+                        <a href="${link}" target="_blank" class="result-link">${link}</a>
                     </div>
                 `;
             });
