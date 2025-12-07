@@ -1,15 +1,21 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>OSINT Social Analyzer | Yepzhi</title>
     <style>
-        * { margin: 0; padding: 0; box-sizing: border-box; }
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
         body {
             font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
             background: #0a0a0a;
-            background-image: 
+            background-image:
                 radial-gradient(at 27% 37%, hsla(215, 98%, 61%, 0.15) 0px, transparent 50%),
                 radial-gradient(at 97% 21%, hsla(125, 98%, 72%, 0.1) 0px, transparent 50%),
                 radial-gradient(at 52% 99%, hsla(354, 98%, 61%, 0.1) 0px, transparent 50%),
@@ -21,6 +27,7 @@
             padding: 40px 20px;
             color: #fff;
         }
+
         .glass-container {
             background: rgba(20, 20, 20, 0.6);
             backdrop-filter: blur(20px);
@@ -33,7 +40,12 @@
             margin-bottom: 24px;
             position: relative;
         }
-        .header { text-align: center; margin-bottom: 40px; }
+
+        .header {
+            text-align: center;
+            margin-bottom: 40px;
+        }
+
         .header h1 {
             background: linear-gradient(135deg, #667eea 0%, #764ba2 50%, #f093fb 100%);
             -webkit-background-clip: text;
@@ -42,7 +54,12 @@
             margin-bottom: 12px;
             font-weight: 800;
         }
-        .header p { color: rgba(255, 255, 255, 0.6); font-size: 1.1em; }
+
+        .header p {
+            color: rgba(255, 255, 255, 0.6);
+            font-size: 1.1em;
+        }
+
         .terms-box {
             background: linear-gradient(135deg, rgba(102, 126, 234, 0.08) 0%, rgba(118, 75, 162, 0.08) 100%);
             border-left: 4px solid #667eea;
@@ -51,7 +68,12 @@
             margin-bottom: 24px;
             border: 1px solid rgba(102, 126, 234, 0.15);
         }
-        .terms-box h3 { margin-bottom: 12px; color: #a8daff; }
+
+        .terms-box h3 {
+            margin-bottom: 12px;
+            color: #a8daff;
+        }
+
         .search-tabs {
             display: flex;
             gap: 12px;
@@ -60,6 +82,7 @@
             background: rgba(255, 255, 255, 0.03);
             border-radius: 24px;
         }
+
         .tab-btn {
             flex: 1;
             padding: 14px 24px;
@@ -71,12 +94,19 @@
             transition: all 0.3s;
             font-weight: 600;
         }
+
         .tab-btn.active {
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             color: white;
             box-shadow: 0 4px 20px rgba(102, 126, 234, 0.4);
         }
-        .search-input-group { display: flex; gap: 12px; margin-bottom: 24px; }
+
+        .search-input-group {
+            display: flex;
+            gap: 12px;
+            margin-bottom: 24px;
+        }
+
         .search-input {
             flex: 1;
             padding: 18px 24px;
@@ -87,6 +117,7 @@
             font-size: 1em;
             outline: none;
         }
+
         .search-btn {
             padding: 18px 40px;
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
@@ -97,8 +128,16 @@
             cursor: pointer;
             box-shadow: 0 4px 24px rgba(102, 126, 234, 0.4);
         }
-        .search-btn:hover { transform: translateY(-2px); }
-        .loading { text-align: center; padding: 60px; }
+
+        .search-btn:hover {
+            transform: translateY(-2px);
+        }
+
+        .loading {
+            text-align: center;
+            padding: 60px;
+        }
+
         .spinner {
             border: 4px solid rgba(255, 255, 255, 0.1);
             border-top: 4px solid #667eea;
@@ -108,7 +147,13 @@
             animation: spin 1s linear infinite;
             margin: 0 auto 24px;
         }
-        @keyframes spin { 100% { transform: rotate(360deg); } }
+
+        @keyframes spin {
+            100% {
+                transform: rotate(360deg);
+            }
+        }
+
         .result-card {
             background: rgba(255, 255, 255, 0.04);
             border-radius: 24px;
@@ -116,22 +161,78 @@
             margin-bottom: 16px;
             border: 1px solid rgba(255, 255, 255, 0.06);
         }
-        .result-card:hover { background: rgba(255, 255, 255, 0.06); transform: translateY(-2px); }
-        .result-header { display: flex; justify-content: space-between; margin-bottom: 12px; }
-        .result-title { font-size: 1.2em; font-weight: 700; }
-        .badge-good { background: rgba(46, 213, 115, 0.15); color: #2ed573; padding: 8px 20px; border-radius: 24px; }
-        .badge-maybe { background: rgba(255, 193, 7, 0.15); color: #ffc107; padding: 8px 20px; border-radius: 24px; }
-        .badge-bad { background: rgba(255, 71, 87, 0.15); color: #ff4757; padding: 8px 20px; border-radius: 24px; }
-        .counter { text-align: center; padding: 20px; background: rgba(255, 255, 255, 0.03); border-radius: 28px; }
-        .footer { text-align: center; color: rgba(255, 255, 255, 0.4); margin-top: 32px; }
-        .footer a { color: #667eea; text-decoration: none; }
+
+        .result-card:hover {
+            background: rgba(255, 255, 255, 0.06);
+            transform: translateY(-2px);
+        }
+
+        .result-header {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 12px;
+        }
+
+        .result-title {
+            font-size: 1.2em;
+            font-weight: 700;
+        }
+
+        .badge-good {
+            background: rgba(46, 213, 115, 0.15);
+            color: #2ed573;
+            padding: 8px 20px;
+            border-radius: 24px;
+        }
+
+        .badge-maybe {
+            background: rgba(255, 193, 7, 0.15);
+            color: #ffc107;
+            padding: 8px 20px;
+            border-radius: 24px;
+        }
+
+        .badge-bad {
+            background: rgba(255, 71, 87, 0.15);
+            color: #ff4757;
+            padding: 8px 20px;
+            border-radius: 24px;
+        }
+
+        .counter {
+            text-align: center;
+            padding: 20px;
+            background: rgba(255, 255, 255, 0.03);
+            border-radius: 28px;
+        }
+
+        .footer {
+            text-align: center;
+            color: rgba(255, 255, 255, 0.4);
+            margin-top: 32px;
+        }
+
+        .footer a {
+            color: #667eea;
+            text-decoration: none;
+        }
+
         @media (max-width: 768px) {
-            .glass-container { padding: 28px 24px; }
-            .header h1 { font-size: 2em; }
-            .search-input-group { flex-direction: column; }
+            .glass-container {
+                padding: 28px 24px;
+            }
+
+            .header h1 {
+                font-size: 2em;
+            }
+
+            .search-input-group {
+                flex-direction: column;
+            }
         }
     </style>
 </head>
+
 <body>
     <div class="glass-container">
         <div class="header">
@@ -169,11 +270,11 @@
     </div>
 
     <script>
-        const API_URL = 'http://129.153.204.181:9005';
+        const API_URL = 'https://yepzhi-tools.hf.space';
         let searchType = 'username';
 
         document.querySelectorAll('.tab-btn').forEach(btn => {
-            btn.addEventListener('click', function() {
+            btn.addEventListener('click', function () {
                 document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
                 this.classList.add('active');
                 searchType = this.dataset.type;
@@ -234,4 +335,5 @@
         }
     </script>
 </body>
+
 </html>
