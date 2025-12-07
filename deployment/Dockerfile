@@ -33,6 +33,5 @@ USER user
 # Expose the port
 EXPOSE 9005
 
-# Start the application
-# app.py runs on 0.0.0.0:9005 by default, no args needed
-CMD ["python", "app.py"]
+# Start the application using npm start (which runs the web server)
+CMD ["npm", "start"]
