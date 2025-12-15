@@ -1,3 +1,11 @@
+---
+title: Yepzhi Tools
+emoji: 🛠️
+colorFrom: indigo
+colorTo: purple
+sdk: docker
+pinned: false
+---
 # OSINT Social Analyzer
 
 A web-based tool to search for profiles across 1000+ social media platforms.
