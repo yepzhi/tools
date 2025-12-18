@@ -60,20 +60,6 @@
             font-size: 1.1em;
         }
 
-        .terms-box {
-            background: linear-gradient(135deg, rgba(102, 126, 234, 0.08) 0%, rgba(118, 75, 162, 0.08) 100%);
-            border-left: 4px solid #667eea;
-            padding: 20px 24px;
-            border-radius: 20px;
-            margin-bottom: 24px;
-            border: 1px solid rgba(102, 126, 234, 0.15);
-        }
-
-        .terms-box h3 {
-            margin-bottom: 12px;
-            color: #a8daff;
-        }
-
         .search-tabs {
             display: flex;
             gap: 12px;
@@ -150,7 +136,6 @@
             transform: translateY(-2px);
         }
 
-        /* Modern Alert */
         .status-alert {
             display: none;
             margin-top: 20px;
@@ -176,28 +161,6 @@
             }
         }
 
-        .loading {
-            text-align: center;
-            padding: 60px;
-        }
-
-        .spinner {
-            border: 4px solid rgba(255, 255, 255, 0.1);
-            border-top: 4px solid #667eea;
-            border-radius: 50%;
-            width: 60px;
-            height: 60px;
-            animation: spin 1s linear infinite;
-            margin: 0 auto 24px;
-        }
-
-        @keyframes spin {
-            100% {
-                transform: rotate(360deg);
-            }
-        }
-
-        /* Compact Grid Layout */
         #resultsContainer {
             display: grid;
             grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
@@ -260,14 +223,6 @@
             border-radius: 24px;
         }
 
-        .badge-bad {
-            background: rgba(255, 71, 87, 0.15);
-            color: #ff4757;
-            padding: 8px 20px;
-            border-radius: 24px;
-        }
-
-        /* Process Visualizer */
         .log-window {
             background: #000;
             border: 1px solid #333;
@@ -297,13 +252,6 @@
             color: #2ed573;
         }
 
-        .counter {
-            text-align: center;
-            padding: 20px;
-            background: rgba(255, 255, 255, 0.03);
-            border-radius: 28px;
-        }
-
         .footer {
             text-align: center;
             color: rgba(255, 255, 255, 0.4);
@@ -324,7 +272,6 @@
                 font-size: 2em;
             }
 
-            /* Mobile Layout: Vertical Stacking */
             .search-controls {
                 flex-direction: column;
                 gap: 16px;
@@ -345,64 +292,12 @@
 </head>
 
 <body>
-    <!-- Tools Header -->
+    <!-- Back Header -->
     <div
         style="width: 100%; max-width: 920px; display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; padding: 0 20px;">
-        <a href="https://yepzhi.com"
+        <a href="hub.html"
             style="color: rgba(255,255,255,0.7); text-decoration: none; display: flex; align-items: center; gap: 8px; font-weight: 500; transition: color 0.2s;">
-            <span>‹</span> Back to Home
-        </a>
-        <div style="font-weight: 700; font-size: 1.2em; color: rgba(255,255,255,0.9);">@Yepzhi Tools✨</div>
-    </div>
-
-    <!-- Modules Navigation -->
-    <div
-        style="width: 100%; max-width: 920px; display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 16px; margin-bottom: 32px; padding: 0 20px;">
-        <div
-            style="background: linear-gradient(135deg, rgba(102, 126, 234, 0.2) 0%, rgba(118, 75, 162, 0.2) 100%); border: 1px solid rgba(102, 126, 234, 0.4); padding: 20px; border-radius: 20px; display: flex; flex-direction: column; align-items: center; text-align: center;">
-            <div style="font-size: 1.5em; margin-bottom: 8px;">🔍</div>
-            <h3 style="margin-bottom: 4px;">OSINT Analyzer</h3>
-            <p style="font-size: 0.85em; opacity: 0.7;">Active Tool</p>
-        </div>
-        <a href="webcert.html"
-            style="text-decoration: none; color: white; background: rgba(255, 255, 255, 0.05); border: 1px solid rgba(255, 255, 255, 0.1); padding: 20px; border-radius: 20px; display: flex; flex-direction: column; align-items: center; text-align: center; transition: all 0.2s;"
-            onmouseover="this.style.background='rgba(255, 255, 255, 0.1)'; this.style.transform='translateY(-2px)'"
-            onmouseout="this.style.background='rgba(255, 255, 255, 0.05)'; this.style.transform='translateY(0)'">
-            <div style="font-size: 1.5em; margin-bottom: 8px;">📜</div>
-            <h3 style="margin-bottom: 4px;">WebCert Generator</h3>
-            <p style="font-size: 0.85em; opacity: 0.7;">Click to Open</p>
-        </a>
-        <a href="https://yepzhi.com/richmond-token-check/"
-            style="text-decoration: none; color: white; background: rgba(255, 255, 255, 0.05); border: 1px solid rgba(255, 255, 255, 0.1); padding: 20px; border-radius: 20px; display: flex; flex-direction: column; align-items: center; text-align: center; transition: all 0.2s;"
-            onmouseover="this.style.background='rgba(255, 255, 255, 0.1)'; this.style.transform='translateY(-2px)'"
-            onmouseout="this.style.background='rgba(255, 255, 255, 0.05)'; this.style.transform='translateY(0)'">
-            <div style="font-size: 1.5em; margin-bottom: 8px;">🎓</div>
-            <h3 style="margin-bottom: 4px;">Richmond Token</h3>
-            <p style="font-size: 0.85em; opacity: 0.7;">Check Access Code</p>
-        </a>
-        <a href="https://yepzhi.com/richmondbot/"
-            style="text-decoration: none; color: white; background: rgba(255, 255, 255, 0.05); border: 1px solid rgba(255, 255, 255, 0.1); padding: 20px; border-radius: 20px; display: flex; flex-direction: column; align-items: center; text-align: center; transition: all 0.2s;"
-            onmouseover="this.style.background='rgba(255, 255, 255, 0.1)'; this.style.transform='translateY(-2px)'"
-            onmouseout="this.style.background='rgba(255, 255, 255, 0.05)'; this.style.transform='translateY(0)'">
-            <div style="font-size: 1.5em; margin-bottom: 8px;">🤖</div>
-            <h3 style="margin-bottom: 4px;">Richmond Bot</h3>
-            <p style="font-size: 0.85em; opacity: 0.7;">AI Support</p>
-        </a>
-        <a href="https://yepzhi.github.io/jovenesstem/"
-            style="text-decoration: none; color: white; background: rgba(255, 255, 255, 0.05); border: 1px solid rgba(255, 255, 255, 0.1); padding: 20px; border-radius: 20px; display: flex; flex-direction: column; align-items: center; text-align: center; transition: all 0.2s;"
-            onmouseover="this.style.background='linear-gradient(135deg, rgba(209, 64, 48, 0.2) 0%, rgba(84, 54, 77, 0.2) 100%)'; this.style.transform='translateY(-2px)';"
-            onmouseout="this.style.background='rgba(255, 255, 255, 0.05)'; this.style.transform='translateY(0)';">
-            <div style="font-size: 1.5em; margin-bottom: 8px;">🚀</div>
-            <h3 style="margin-bottom: 4px;">JóvenesSTEM</h3>
-            <p style="font-size: 0.85em; opacity: 0.7;">Science & Tech Ed</p>
-        </a>
-        <a href="https://yepzhi.github.io/sensor-monitor/"
-            style="text-decoration: none; color: white; background: rgba(255, 255, 255, 0.05); border: 1px solid rgba(255, 255, 255, 0.1); padding: 20px; border-radius: 20px; display: flex; flex-direction: column; align-items: center; text-align: center; transition: all 0.2s;"
-            onmouseover="this.style.background='rgba(255, 255, 255, 0.1)'; this.style.transform='translateY(-2px)'"
-            onmouseout="this.style.background='rgba(255, 255, 255, 0.05)'; this.style.transform='translateY(0)'">
-            <div style="font-size: 1.5em; margin-bottom: 8px;">🧭</div>
-            <h3 style="margin-bottom: 4px;">Sensor Monitor</h3>
-            <p style="font-size: 0.85em; opacity: 0.7;">Real-time Sensors</p>
+            <span>‹</span> Back to Hub
         </a>
     </div>
 
@@ -450,10 +345,6 @@
         <div id="resultsContainer"></div>
     </div>
 
-    <div class="glass-container counter">
-        <div>🔎 Your Searches: <span id="searchCounter">0</span></div>
-    </div>
-
     <div class="footer">
         <p>Developed by <a href="https://github.com/yepzhi" target="_blank">@yepzhi</a></p>
         <p style="margin-top: 8px; font-size: 0.85em;">Educational purposes only</p>
@@ -462,20 +353,6 @@
     <script>
         const API_URL = 'https://yepzhi-tools.hf.space';
         let searchType = 'username';
-        let hasShownAlert = false;
-
-        // Initialize Counter
-        let searchCount = localStorage.getItem('searchCount') || 0;
-        document.getElementById('searchCounter').innerText = searchCount;
-
-        document.querySelectorAll('.tab-btn').forEach(btn => {
-            btn.addEventListener('click', function () {
-                document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
-                this.classList.add('active');
-                searchType = this.dataset.type;
-                updatePlaceholder(searchType); // Update placeholder when tab changes
-            });
-        });
 
         function updatePlaceholder(type) {
             const input = document.getElementById('searchInput');
@@ -492,6 +369,15 @@
                 hint.innerHTML = '💡 Tip: Enter 10-digit phone number without country code or dashes.';
             }
         }
+
+        document.querySelectorAll('.tab-btn').forEach(btn => {
+            btn.addEventListener('click', function () {
+                document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+                this.classList.add('active');
+                searchType = this.dataset.type;
+                updatePlaceholder(searchType);
+            });
+        });
 
         document.getElementById('searchBtn').addEventListener('click', performSearch);
 
@@ -521,24 +407,20 @@
                 return;
             }
 
-            // Reset UI
             document.getElementById('resultsContainer').innerHTML = '';
             document.getElementById('processLog').innerHTML = '';
 
-            // Generate UUID
             const uuid = 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function (c) {
                 var r = Math.random() * 16 | 0, v = c == 'x' ? r : (r & 0x3 | 0x8);
                 return v.toString(16);
             });
 
-            // Start Visualizer
             log(`Initializing search for "${query}"...`);
             log(`Target: ${searchType}`);
             log(`Depth: Top ${depth} sites`);
             log(`UUID: ${uuid}`);
 
             try {
-                // Step 1: Configure Backend for Depth
                 log(`Retrieving site list...`);
                 const settingsResponse = await fetch(`${API_URL}/get_settings`);
                 if (!settingsResponse.ok) throw new Error('Failed to fetch settings');
@@ -546,24 +428,17 @@
 
                 log(`Configuring search scope...`);
 
-                // Sort by global_rank (if available, otherwise fallback to index or default)
-                // Filter out bad status
                 let sites = settings.websites || [];
-
-                // Sort: 0 is usually top rank. Handle missing ranks.
                 sites.sort((a, b) => (a.global_rank || 999999) - (b.global_rank || 999999));
 
-                // Slice top N
                 const selectedSites = sites.slice(0, depth);
                 const inputIds = selectedSites.map(s => s.index).join(',');
 
-                // Step 2: Save Selection
                 const saveResponse = await fetch(`${API_URL}/save_settings`, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({
                         websites: inputIds,
-                        // Maintain other defaults to avoid breaking things
                         google_key: settings.google && settings.google[0] ? settings.google[0] : '',
                         google_cv: settings.google && settings.google[1] ? settings.google[1] : '',
                         user_agent: settings.user_agent,
@@ -571,18 +446,14 @@
                     })
                 });
 
-                // Wait a moment for settings to apply
                 log(`Scope configured. Connecting to backend node...`);
 
-                // Simulate "Scanning"
-                // Using selected sites for visualization
                 const sampleSites = selectedSites.slice(0, 10).map(s => s.url);
                 let scanInterval = setInterval(() => {
                     const randomSite = sampleSites[Math.floor(Math.random() * sampleSites.length)];
                     log(`Scanning ${randomSite}...`);
                 }, 800);
 
-                // Step 3: Analyze
                 const response = await fetch(`${API_URL}/analyze_string`, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
@@ -600,20 +471,13 @@
                 }
 
                 const data = await response.json();
-
                 const results = data.user_info_normal && data.user_info_normal.data ? data.user_info_normal.data : [];
-
-                // Update Counter
-                searchCount++;
-                localStorage.setItem('searchCount', searchCount);
-                document.getElementById('searchCounter').innerText = searchCount;
 
                 log(`Analysis complete.`, 'success');
                 log(`Processed ${sites.length} available -> ${selectedSites.length} selected -> ${results.length} matches found.`, 'success');
                 displayResults(results, query);
 
             } catch (error) {
-                clearInterval(scanInterval);
                 log(`ERROR: ${error.message}`, 'error');
                 log(`NOTE: Server might be waking up (20min delay).`, 'error');
 
@@ -633,7 +497,6 @@
                 return;
             }
 
-            // Categorize results
             const highConfidence = results.filter(r => r.good === 'true' || r.rate >= 50);
             const lowConfidence = results.filter(r => r.good !== 'true' && (r.rate < 50 || !r.rate));
 
@@ -687,4 +550,3 @@
 </body>
 
 </html>
-```

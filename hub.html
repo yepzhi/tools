@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Yepzhi Tools Hub | Portal</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: #0a0a0a;
+            background-image:
+                radial-gradient(at 27% 37%, hsla(215, 98%, 61%, 0.15) 0px, transparent 50%),
+                radial-gradient(at 97% 21%, hsla(125, 98%, 72%, 0.1) 0px, transparent 50%),
+                radial-gradient(at 52% 99%, hsla(354, 98%, 61%, 0.1) 0px, transparent 50%),
+                radial-gradient(at 10% 29%, hsla(256, 96%, 67%, 0.15) 0px, transparent 50%);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 40px 20px;
+            color: #fff;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 40px;
+        }
+
+        .header h1 {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 50%, #f093fb 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            font-size: 3em;
+            margin-bottom: 12px;
+            font-weight: 800;
+        }
+
+        .header p {
+            color: rgba(255, 255, 255, 0.6);
+            font-size: 1.1em;
+        }
+
+        .modules-grid {
+            width: 100%;
+            max-width: 920px;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 16px;
+            margin-bottom: 32px;
+        }
+
+        .module-card {
+            text-decoration: none;
+            color: white;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            padding: 30px 20px;
+            border-radius: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
+            transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .module-card:hover {
+            background: rgba(255, 255, 255, 0.1);
+            transform: translateY(-4px);
+            box-shadow: 0 10px 30px -10px rgba(0, 0, 0, 0.5);
+            border-color: rgba(255, 255, 255, 0.2);
+        }
+
+        .module-icon {
+            font-size: 2.5em;
+            margin-bottom: 12px;
+            filter: drop-shadow(0 4px 6px rgba(0, 0, 0, 0.2));
+        }
+
+        .module-title {
+            margin-bottom: 6px;
+            font-weight: 700;
+            font-size: 1.25rem;
+        }
+
+        .module-desc {
+            font-size: 0.9em;
+            opacity: 0.7;
+        }
+
+        .footer {
+            text-align: center;
+            color: rgba(255, 255, 255, 0.4);
+            margin-top: auto;
+            padding-top: 40px;
+        }
+
+        .footer a {
+            color: #667eea;
+            text-decoration: none;
+        }
+    </style>
+</head>
+
+<body>
+    <!-- Header -->
+    <div
+        style="width: 100%; max-width: 920px; display: flex; justify-content: space-between; align-items: center; margin-bottom: 40px; padding: 0 10px;">
+        <a href="https://yepzhi.com"
+            style="color: rgba(255,255,255,0.7); text-decoration: none; display: flex; align-items: center; gap: 8px; font-weight: 500; transition: color 0.2s;">
+            <span>‹</span> Back to Home
+        </a>
+        <div style="font-weight: 700; font-size: 1.2em; color: rgba(255,255,255,0.9);">@Yepzhi Tools✨</div>
+    </div>
+
+    <div class="header">
+        <h1>Developer Hub</h1>
+        <p>Access all tools and platforms from one place</p>
+    </div>
+
+    <!-- Modules Navigation -->
+    <div class="modules-grid">
+        <!-- OSINT -->
+        <a href="osint.html" class="module-card">
+            <div class="module-icon">🔍</div>
+            <h3 class="module-title">OSINT Analyzer</h3>
+            <p class="module-desc">Deep profile search engine</p>
+        </a>
+
+        <!-- WebCert -->
+        <a href="webcert.html" class="module-card">
+            <div class="module-icon">📜</div>
+            <h3 class="module-title">WebCert Generator</h3>
+            <p class="module-desc">Create digital certificates</p>
+        </a>
+
+        <!-- Richmond Token -->
+        <a href="https://yepzhi.com/richmond-token-check/" class="module-card">
+            <div class="module-icon">🎓</div>
+            <h3 class="module-title">Richmond Token</h3>
+            <p class="module-desc">Access Code Validator</p>
+        </a>
+
+        <!-- Richmond Bot -->
+        <a href="https://yepzhi.com/richmondbot/" class="module-card">
+            <div class="module-icon">🤖</div>
+            <h3 class="module-title">Richmond Bot</h3>
+            <p class="module-desc">AI Support Assistant</p>
+        </a>
+
+        <!-- JovenesSTEM -->
+        <a href="https://yepzhi.github.io/jovenesstem/" class="module-card">
+            <div class="module-icon">🚀</div>
+            <h3 class="module-title">JóvenesSTEM</h3>
+            <p class="module-desc">Science & Tech Education</p>
+        </a>
+
+        <!-- Sensor Monitor -->
+        <a href="https://yepzhi.github.io/sensor-monitor/" class="module-card">
+            <div class="module-icon">🧭</div>
+            <h3 class="module-title">Sensor Monitor</h3>
+            <p class="module-desc">Real-time Device Sensors</p>
+        </a>
+    </div>
+
+    <div class="footer">
+        <p>Developed by <a href="https://github.com/yepzhi" target="_blank">@yepzhi</a></p>
+        <p style="margin-top: 8px; font-size: 0.85em;">Educational purposes only</p>
+    </div>
+</body>
+
+</html>
