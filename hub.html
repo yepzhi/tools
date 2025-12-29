@@ -13,19 +13,43 @@
         }
 
         body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-            background: #0a0a0a;
-            background-image:
-                radial-gradient(at 27% 37%, hsla(215, 98%, 61%, 0.15) 0px, transparent 50%),
-                radial-gradient(at 97% 21%, hsla(125, 98%, 72%, 0.1) 0px, transparent 50%),
-                radial-gradient(at 52% 99%, hsla(354, 98%, 61%, 0.1) 0px, transparent 50%),
-                radial-gradient(at 10% 29%, hsla(256, 96%, 67%, 0.15) 0px, transparent 50%);
+            font-family: "SF Pro Display", -apple-system, BlinkMacSystemFont, "Helvetica Neue", Arial, sans-serif;
+            background-color: #000;
+            color: #fff;
             min-height: 100vh;
             display: flex;
             flex-direction: column;
             align-items: center;
             padding: 40px 20px;
-            color: #fff;
+            position: relative;
+            overflow-x: hidden;
+        }
+
+        /* SERG Radio Dynamic Background */
+        body::before {
+            content: '';
+            position: fixed;
+            inset: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: -1;
+            background:
+                radial-gradient(circle at 20% 50%, rgba(0, 0, 255, 0.15) 0%, transparent 50%),
+                radial-gradient(circle at 80% 80%, rgba(255, 0, 0, 0.1) 0%, transparent 50%);
+            animation: bg-pulse 8s ease-in-out infinite;
+        }
+
+        @keyframes bg-pulse {
+
+            0%,
+            100% {
+                opacity: 1;
+            }
+
+            50% {
+                opacity: 0.6;
+            }
         }
 
         .header {
@@ -33,13 +57,19 @@
             margin-bottom: 40px;
         }
 
+        /* Yellow Foggy Title */
         .header h1 {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 50%, #f093fb 100%);
+            background: linear-gradient(135deg, #fefce8 0%, #facc15 50%, #ca8a04 100%);
             -webkit-background-clip: text;
+            background-clip: text;
             -webkit-text-fill-color: transparent;
-            font-size: 3em;
+            font-size: 3.5em;
+            /* Slightly larger */
             margin-bottom: 12px;
             font-weight: 800;
+            letter-spacing: -1px;
+            /* Yellow Fog Glow */
+            filter: drop-shadow(0 0 15px rgba(250, 204, 21, 0.6)) drop-shadow(0 0 40px rgba(250, 204, 21, 0.3));
         }
 
         .header p {
@@ -99,14 +129,51 @@
 
         .footer {
             text-align: center;
-            color: rgba(255, 255, 255, 0.4);
             margin-top: auto;
             padding-top: 40px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 10px;
         }
 
-        .footer a {
-            color: #667eea;
+        /* Footer Button Style */
+        .footer-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 6px 16px;
+            border-radius: 9999px;
+            /* full */
+            background: linear-gradient(135deg, #111827, #000);
+            /* gray-900 to black */
+            border: 1px solid #1f2937;
+            /* gray-800 */
+            color: #3b82f6;
+            /* blue-500 */
             text-decoration: none;
+            font-size: 0.75rem;
+            /* ~12px/10px */
+            font-weight: 700;
+            box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+            transition: all 0.2s ease;
+        }
+
+        .footer-btn:hover {
+            color: #60a5fa;
+            /* blue-400 */
+            border-color: #1e3a8a;
+            /* blue-900 */
+            transform: scale(1.05);
+        }
+
+        .footer-text-prefix {
+            color: #6b7280;
+            /* gray-500 */
+            font-size: 10px;
+            font-weight: 500;
+            letter-spacing: 0.025em;
+            margin-right: 4px;
         }
 
         /* --- LOGO STYLES (Ported from Main Site) --- */
@@ -155,6 +222,26 @@
             font-size: 1.5em;
             /* +50% Size */
         }
+
+        /* --- SERGRadio Styles --- */
+        .serg-blue-text {
+            color: #1d4ed8;
+            /* Blue-700 equivalent */
+            text-shadow:
+                0 0 10px rgba(0, 0, 255, 0.9),
+                0 0 20px rgba(0, 0, 255, 0.6);
+            font-weight: 900;
+            letter-spacing: -2px;
+        }
+
+        .serg-radio-text {
+            background: linear-gradient(135deg, #ff4444 0%, #cc0000 60%, #8b0000 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            font-weight: 900;
+            letter-spacing: -1px;
+        }
     </style>
 </head>
 
@@ -166,7 +253,7 @@
             style="color: rgba(255,255,255,0.7); text-decoration: none; display: flex; align-items: center; gap: 8px; font-weight: 500; transition: color 0.2s;">
             <span>‹</span> Back to Home
         </a>
-        <div style="font-weight: 700; font-size: 1.2em; color: rgba(255,255,255,0.9);">@Yepzhi Tools✨</div>
+        <div style="font-weight: 700; font-size: 1.2em; color: rgba(255,255,255,0.9);">@yepzhi Tools✨</div>
     </div>
 
     <div class="header">
@@ -225,6 +312,15 @@
             <p class="module-desc">Live Music Station</p>
         </a>
 
+        <!-- SERGRadio -->
+        <a href="https://yepzhi.com/SERGRadio/" class="module-card" style="justify-content: center; padding-top: 50px;">
+            <h3 class="module-title">
+                <span class="serg-blue-text" style="font-size: 1.3em;">SERG</span><span class="serg-radio-text"
+                    style="font-size: 1.3em;">Radio</span>
+            </h3>
+            <p class="module-desc">Live Music Station</p>
+        </a>
+
         <!-- Sensor Monitor -->
         <a href="https://yepzhi.github.io/sensor-monitor/" class="module-card">
             <div class="module-icon">🧭</div>
@@ -234,8 +330,13 @@
     </div>
 
     <div class="footer">
-        <p>Developed by <a href="https://github.com/yepzhi" target="_blank">@yepzhi</a></p>
-        <p style="margin-top: 8px; font-size: 0.85em;">Educational purposes only</p>
+        <div>
+            <span class="footer-text-prefix">Developed by</span>
+            <a href="https://yepzhi.com" target="_blank" class="footer-btn">
+                @yepzhi
+            </a>
+        </div>
+        <p style="font-size: 0.75em; color: rgba(255,255,255,0.3);">Educational purposes only</p>
     </div>
 </body>
 
