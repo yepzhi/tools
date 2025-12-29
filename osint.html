@@ -13,19 +13,43 @@
         }
 
         body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-            background: #0a0a0a;
-            background-image:
-                radial-gradient(at 27% 37%, hsla(215, 98%, 61%, 0.15) 0px, transparent 50%),
-                radial-gradient(at 97% 21%, hsla(125, 98%, 72%, 0.1) 0px, transparent 50%),
-                radial-gradient(at 52% 99%, hsla(354, 98%, 61%, 0.1) 0px, transparent 50%),
-                radial-gradient(at 10% 29%, hsla(256, 96%, 67%, 0.15) 0px, transparent 50%);
+            font-family: "SF Pro Display", -apple-system, BlinkMacSystemFont, "Helvetica Neue", Arial, sans-serif;
+            background-color: #000;
+            color: #fff;
             min-height: 100vh;
             display: flex;
             flex-direction: column;
             align-items: center;
             padding: 40px 20px;
-            color: #fff;
+            position: relative;
+            overflow-x: hidden;
+        }
+
+        /* SERG Radio Dynamic Background */
+        body::before {
+            content: '';
+            position: fixed;
+            inset: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: -1;
+            background:
+                radial-gradient(circle at 20% 50%, rgba(0, 0, 255, 0.15) 0%, transparent 50%),
+                radial-gradient(circle at 80% 80%, rgba(255, 0, 0, 0.1) 0%, transparent 50%);
+            animation: bg-pulse 8s ease-in-out infinite;
+        }
+
+        @keyframes bg-pulse {
+
+            0%,
+            100% {
+                opacity: 1;
+            }
+
+            50% {
+                opacity: 0.6;
+            }
         }
 
         .glass-container {
@@ -46,13 +70,17 @@
             margin-bottom: 40px;
         }
 
+        /* Yellow Foggy Title */
         .header h1 {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 50%, #f093fb 100%);
+            background: linear-gradient(135deg, #fefce8 0%, #facc15 50%, #ca8a04 100%);
             -webkit-background-clip: text;
+            background-clip: text;
             -webkit-text-fill-color: transparent;
-            font-size: 3em;
+            font-size: 3.5em;
             margin-bottom: 12px;
             font-weight: 800;
+            letter-spacing: -1px;
+            filter: drop-shadow(0 0 15px rgba(250, 204, 21, 0.6)) drop-shadow(0 0 40px rgba(250, 204, 21, 0.3));
         }
 
         .header p {
@@ -82,15 +110,16 @@
         }
 
         .tab-btn.active {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            background: linear-gradient(135deg, #1d4ed8 0%, #1e40af 100%);
+            /* SERG Blue */
             color: white;
-            box-shadow: 0 4px 20px rgba(102, 126, 234, 0.4);
+            box-shadow: 0 4px 20px rgba(30, 64, 175, 0.4);
         }
 
         .search-controls {
             display: flex;
             gap: 12px;
-            margin-bottom: 12px;
+            margin-bottom: 30px;
         }
 
         .search-input-wrapper {
@@ -107,160 +136,132 @@
             color: white;
             font-size: 1em;
             outline: none;
+            transition: border-color 0.2s;
         }
 
-        .depth-select {
-            background: rgba(255, 255, 255, 0.04);
-            border: 1px solid rgba(255, 255, 255, 0.08);
-            color: white;
-            border-radius: 28px;
-            padding: 0 24px;
-            outline: none;
-            appearance: none;
-            cursor: pointer;
-            min-width: 140px;
+        .search-input:focus {
+            border-color: #3b82f6;
         }
 
         .search-btn {
             padding: 18px 40px;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            background: linear-gradient(135deg, #1d4ed8 0%, #172554 100%);
             border: none;
             border-radius: 28px;
             color: white;
             font-weight: 700;
             cursor: pointer;
-            box-shadow: 0 4px 24px rgba(102, 126, 234, 0.4);
+            box-shadow: 0 4px 24px rgba(29, 78, 216, 0.4);
+            transition: transform 0.2s;
         }
 
         .search-btn:hover {
             transform: translateY(-2px);
         }
 
-        .status-alert {
-            display: none;
+        /* --- Active Recon Grid --- */
+        .recon-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 16px;
             margin-top: 20px;
-            padding: 16px;
-            background: rgba(255, 193, 7, 0.1);
-            border: 1px solid rgba(255, 193, 7, 0.3);
-            border-radius: 16px;
+            opacity: 0;
+            transform: translateY(10px);
+            animation: fadeIn 0.5s forwards;
+            display: none;
+            /* Hidden until search */
+        }
+
+        .recon-card {
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-radius: 20px;
+            padding: 20px;
+            cursor: pointer;
+            transition: all 0.2s;
+            text-decoration: none;
+            display: block;
+        }
+
+        .recon-card:hover {
+            background: rgba(255, 255, 255, 0.08);
+            transform: translateY(-2px);
+            border-color: rgba(59, 130, 246, 0.4);
+        }
+
+        .recon-title {
+            color: #fff;
+            font-weight: 700;
+            margin-bottom: 6px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .recon-desc {
+            color: rgba(255, 255, 255, 0.5);
+            font-size: 0.85em;
+        }
+
+        .section-title {
+            width: 100%;
+            text-align: left;
+            margin-top: 30px;
+            margin-bottom: 10px;
             font-size: 0.9em;
-            color: rgba(255, 255, 255, 0.9);
-            text-align: center;
-            animation: fadeIn 0.5s ease;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            color: rgba(255, 255, 255, 0.4);
+            font-weight: 700;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            padding-bottom: 8px;
         }
 
         @keyframes fadeIn {
-            from {
-                opacity: 0;
-                transform: translateY(-10px);
-            }
-
             to {
                 opacity: 1;
                 transform: translateY(0);
             }
         }
 
-        #resultsContainer {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
-            gap: 12px;
-            margin-top: 20px;
-        }
-
-        .result-card {
-            padding: 16px;
-            background: rgba(255, 255, 255, 0.03);
-            border-radius: 12px;
-            border: 1px solid rgba(255, 255, 255, 0.05);
-            display: flex;
-            flex-direction: column;
-            justify-content: space-between;
-            font-size: 0.9em;
-        }
-
-        .result-card:hover {
-            background: rgba(255, 255, 255, 0.06);
-            transform: translateY(-2px);
-        }
-
-        .result-header {
-            margin-bottom: 8px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-
-        .result-title {
-            font-size: 1em;
-            white-space: nowrap;
-            overflow: hidden;
-            text-overflow: ellipsis;
-        }
-
-        .result-link {
-            font-size: 0.85em;
-            color: #a8daff;
-            text-decoration: none;
-            word-break: break-all;
-            display: -webkit-box;
-            -webkit-line-clamp: 2;
-            -webkit-box-orient: vertical;
-            overflow: hidden;
-        }
-
-        .badge-good {
-            background: rgba(46, 213, 115, 0.15);
-            color: #2ed573;
-            padding: 4px 12px;
-            border-radius: 24px;
-        }
-
-        .badge-maybe {
-            background: rgba(255, 193, 7, 0.15);
-            color: #ffc107;
-            padding: 4px 12px;
-            border-radius: 24px;
-        }
-
-        .log-window {
-            background: #000;
-            border: 1px solid #333;
-            border-radius: 12px;
-            padding: 16px;
-            font-family: 'Courier New', monospace;
-            font-size: 0.85em;
-            color: #0f0;
-            height: 150px;
-            overflow-y: auto;
-            margin-bottom: 24px;
-            display: none;
-            box-shadow: inset 0 0 20px rgba(0, 255, 0, 0.1);
-            margin-top: 20px;
-        }
-
-        .log-line {
-            margin-bottom: 4px;
-            opacity: 0.8;
-        }
-
-        .log-line.error {
-            color: #ff4757;
-        }
-
-        .log-line.success {
-            color: #2ed573;
-        }
-
+        /* Footer */
         .footer {
             text-align: center;
-            color: rgba(255, 255, 255, 0.4);
             margin-top: 32px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 10px;
         }
 
-        .footer a {
-            color: #667eea;
+        .footer-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 6px 16px;
+            border-radius: 9999px;
+            background: linear-gradient(135deg, #111827, #000);
+            border: 1px solid #1f2937;
+            color: #3b82f6;
             text-decoration: none;
+            font-size: 0.75rem;
+            font-weight: 700;
+            box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+            transition: all 0.2s ease;
+        }
+
+        .footer-btn:hover {
+            color: #60a5fa;
+            border-color: #1e3a8a;
+            transform: scale(1.05);
+        }
+
+        .footer-text-prefix {
+            color: #6b7280;
+            font-size: 10px;
+            font-weight: 500;
+            letter-spacing: 0.025em;
+            margin-right: 4px;
         }
 
         @media (max-width: 768px) {
@@ -269,23 +270,15 @@
             }
 
             .header h1 {
-                font-size: 2em;
+                font-size: 2.5em;
             }
 
             .search-controls {
                 flex-direction: column;
-                gap: 16px;
             }
 
-            .search-input,
-            .depth-select,
             .search-btn {
                 width: 100%;
-                padding: 18px;
-            }
-
-            .search-tabs {
-                flex-wrap: wrap;
             }
         }
     </style>
@@ -303,249 +296,134 @@
 
     <div class="glass-container">
         <div class="header" style="margin-bottom: 30px;">
-            <h1>OSINT Social Analyzer</h1>
-            <p>Deep profile search across social networks</p>
+            <h1>OSINT Deep Search</h1>
+            <p>Professional Active Reconnaissance Tools</p>
         </div>
 
         <div class="search-tabs">
-            <button class="tab-btn active" data-type="username" onclick="updatePlaceholder('username')">👤
-                Username</button>
-            <button class="tab-btn" data-type="email" onclick="updatePlaceholder('email')">📧 Email</button>
-            <button class="tab-btn" data-type="phone" onclick="updatePlaceholder('phone')">📱 Phone</button>
+            <button class="tab-btn active" data-type="username" onclick="setMode('username')">👤 Username</button>
+            <button class="tab-btn" data-type="email" onclick="setMode('email')">📧 Email</button>
+            <button class="tab-btn" data-type="phone" onclick="setMode('phone')">📱 Phone</button>
         </div>
 
         <div class="search-controls">
             <div class="search-input-wrapper">
-                <input type="text" id="searchInput" class="search-input" placeholder="e.g. johndoe">
+                <input type="text" id="searchInput" class="search-input" placeholder="e.g. johndoe (Exact username)">
             </div>
-            <select id="depthSelector" class="depth-select">
-                <option value="100" style="background: #333;">Top 100 Sites</option>
-                <option value="500" style="background: #333;">Top 500 Sites</option>
-                <option value="1000" style="background: #333;">All 1000 Sites</option>
-            </select>
-            <button class="search-btn" id="searchBtn">Search</button>
+            <button class="search-btn" onclick="generateReport()">Generate Intel</button>
         </div>
 
-        <!-- Input Guidelines -->
-        <div id="inputHint"
-            style="font-size: 0.85em; color: rgba(255, 255, 255, 0.5); padding-left: 24px; margin-bottom: 12px;">
-            💡 Tip: Enter the exact username you want to find (e.g. "johndoe").
+        <!-- Results / Tools Grid -->
+        <div id="reconGrid" class="recon-grid">
+            <!-- Content Injected via JS -->
         </div>
 
-        <!-- Modern Status Alert -->
-        <div id="statusAlert" class="status-alert">
-            <strong>⚠️ Backend Status</strong><br>
-            The backend engine may be asleep. If the search takes too long or fails, it might need up to <strong>20
-                minutes</strong> to wake up.
-        </div>
-
-        <!-- Visualizer -->
-        <div id="processLog" class="log-window"></div>
-
-        <div id="resultsContainer"></div>
     </div>
 
     <div class="footer">
-        <p>Developed by <a href="https://github.com/yepzhi" target="_blank">@yepzhi</a></p>
-        <p style="margin-top: 8px; font-size: 0.85em;">Educational purposes only</p>
+        <div>
+            <span class="footer-text-prefix">Developed by</span>
+            <a href="https://yepzhi.com" target="_blank" class="footer-btn">
+                @yepzhi
+            </a>
+        </div>
     </div>
 
     <script>
-        const API_URL = 'https://yepzhi-tools.hf.space';
-        let searchType = 'username';
+        let currentMode = 'username';
 
-        function updatePlaceholder(type) {
+        function setMode(mode) {
+            currentMode = mode;
+            document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+            document.querySelector(`[data-type="${mode}"]`).classList.add('active');
+
             const input = document.getElementById('searchInput');
-            const hint = document.getElementById('inputHint');
+            if (mode === 'username') input.placeholder = "e.g. johndoe (Exact username)";
+            if (mode === 'email') input.placeholder = "e.g. user@example.com";
+            if (mode === 'phone') input.placeholder = "e.g. 5512345678 (No format)";
 
-            if (type === 'username') {
-                input.placeholder = "e.g. johndoe";
-                hint.innerHTML = '💡 Tip: Enter the exact username without @ symbol (e.g. "johndoe").';
-            } else if (type === 'email') {
-                input.placeholder = "e.g. user@example.com";
-                hint.innerHTML = '💡 Tip: Ensure valid email format (e.g. "user@gmail.com").';
-            } else if (type === 'phone') {
-                input.placeholder = "e.g. 5512345678";
-                hint.innerHTML = '💡 Tip: Enter 10-digit phone number without country code or dashes.';
-            }
+            // Clear current results to avoid confusion
+            document.getElementById('reconGrid').style.display = 'none';
         }
 
-        document.querySelectorAll('.tab-btn').forEach(btn => {
-            btn.addEventListener('click', function () {
-                document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
-                this.classList.add('active');
-                searchType = this.dataset.type;
-                updatePlaceholder(searchType);
-            });
-        });
-
-        document.getElementById('searchBtn').addEventListener('click', performSearch);
-
-        function log(message, type = 'info') {
-            const logWindow = document.getElementById('processLog');
-            logWindow.style.display = 'block';
-            const line = document.createElement('div');
-            line.className = `log-line ${type}`;
-            line.innerText = `> ${message}`;
-            logWindow.appendChild(line);
-            logWindow.scrollTop = logWindow.scrollHeight;
-        }
-
-        async function performSearch() {
+        function generateReport() {
             const query = document.getElementById('searchInput').value.trim();
-            const depth = parseInt(document.getElementById('depthSelector').value);
+            const grid = document.getElementById('reconGrid');
 
-            if (!query) { alert('Please enter a search term'); return; }
-
-            // Validation
-            if (searchType === 'email' && !query.includes('@')) {
-                alert('Please enter a valid email address.');
-                return;
-            }
-            if (searchType === 'phone' && !/^\d{10}$/.test(query.replace(/\D/g, ''))) {
-                alert('Please enter a 10-digit phone number.');
+            if (!query) {
+                alert("Please enter a target to investigate.");
                 return;
             }
 
-            document.getElementById('resultsContainer').innerHTML = '';
-            document.getElementById('processLog').innerHTML = '';
+            grid.innerHTML = '';
+            grid.style.display = 'grid';
 
-            const uuid = 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function (c) {
-                var r = Math.random() * 16 | 0, v = c == 'x' ? r : (r & 0x3 | 0x8);
-                return v.toString(16);
-            });
-
-            log(`Initializing search for "${query}"...`);
-            log(`Target: ${searchType}`);
-            log(`Depth: Top ${depth} sites`);
-            log(`UUID: ${uuid}`);
-
-            try {
-                log(`Retrieving site list...`);
-                const settingsResponse = await fetch(`${API_URL}/get_settings`);
-                if (!settingsResponse.ok) throw new Error('Failed to fetch settings');
-                const settings = await settingsResponse.json();
-
-                log(`Configuring search scope...`);
-
-                let sites = settings.websites || [];
-                sites.sort((a, b) => (a.global_rank || 999999) - (b.global_rank || 999999));
-
-                const selectedSites = sites.slice(0, depth);
-                const inputIds = selectedSites.map(s => s.index).join(',');
-
-                const saveResponse = await fetch(`${API_URL}/save_settings`, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({
-                        websites: inputIds,
-                        google_key: settings.google && settings.google[0] ? settings.google[0] : '',
-                        google_cv: settings.google && settings.google[1] ? settings.google[1] : '',
-                        user_agent: settings.user_agent,
-                        proxy: settings.proxy
-                    })
-                });
-
-                log(`Scope configured. Connecting to backend node...`);
-
-                const sampleSites = selectedSites.slice(0, 10).map(s => s.url);
-                let scanInterval = setInterval(() => {
-                    const randomSite = sampleSites[Math.floor(Math.random() * sampleSites.length)];
-                    log(`Scanning ${randomSite}...`);
-                }, 800);
-
-                const response = await fetch(`${API_URL}/analyze_string`, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({
-                        string: query,
-                        option: 'FindUserProfilesFast',
-                        uuid: uuid
-                    })
-                });
-
-                clearInterval(scanInterval);
-
-                if (!response.ok) {
-                    throw new Error(`Server Error: ${response.status} ${response.statusText}`);
-                }
-
-                const data = await response.json();
-                const results = data.user_info_normal && data.user_info_normal.data ? data.user_info_normal.data : [];
-
-                log(`Analysis complete.`, 'success');
-                log(`Processed ${sites.length} available -> ${selectedSites.length} selected -> ${results.length} matches found.`, 'success');
-                displayResults(results, query);
-
-            } catch (error) {
-                log(`ERROR: ${error.message}`, 'error');
-                log(`NOTE: Server might be waking up (20min delay).`, 'error');
-
-                document.getElementById('resultsContainer').innerHTML = `
-                    <div style="text-align:center; padding: 20px; grid-column: 1/-1;">
-                        <h3 style="color: #ff4757">Search Interrupted</h3>
-                        <p style="color: #ccc;">Backend connection failed or timed out.</p>
-                        <p style="font-size: 0.8em; opacity: 0.7; margin-top: 10px;">${error.message}</p>
-                    </div>
-                `;
+            if (currentMode === 'username') {
+                renderUsernameTools(query, grid);
+            } else if (currentMode === 'email') {
+                renderEmailTools(query, grid);
+            } else if (currentMode === 'phone') {
+                renderPhoneTools(query, grid);
             }
         }
 
-        function displayResults(results, query) {
-            if (!results || results.length === 0) {
-                document.getElementById('resultsContainer').innerHTML = '<p style="text-align:center; width:100%">No results found (or all timed out).</p>';
-                return;
-            }
+        function renderUsernameTools(q, container) {
+            // Google Dorks
+            addSection(container, "🔎 Google Dorks (Passive Recon)");
+            addCard(container, "Social Networks", "Search top social sites", `https://www.google.com/search?q=site:instagram.comOr+site:twitter.com+OR+site:facebook.com+OR+site:linkedin.com+"${q}"`);
+            addCard(container, "Exact Profile Match", "Force exact username match", `https://www.google.com/search?q=inurl:${q}`);
+            addCard(container, "Documents / Leaks", "Search for PDF/DOC/TXT files", `https://www.google.com/search?q="${q}"+filetype:pdf+OR+filetype:doc+OR+filetype:txt`);
+            addCard(container, "Pastebin / Text Dumps", "Search data leaks", `https://www.google.com/search?q=site:pastebin.com+"${q}"`);
 
-            const highConfidence = results.filter(r => r.good === 'true' || r.rate >= 50);
-            const lowConfidence = results.filter(r => r.good !== 'true' && (r.rate < 50 || !r.rate));
+            // Verification Tools
+            addSection(container, "⚡ Verification Tools (Active Recon)");
+            addCard(container, "WhatsMyName.app", "Check 500+ sites (Best Choice)", `https://whatsmyname.app/?q=${q}`);
+            addCard(container, "NameCheckup", "Availability checker", `https://namecheckup.com/`);
+            addCard(container, "Sherlock Cloud", "Run Sherlock on CloudShell", `https://shell.cloud.google.com/?show=ide%2Cterminal`);
+        }
 
-            let html = `
-                <div style="grid-column: 1/-1; margin-bottom: 10px; padding: 10px; background: rgba(255,255,255,0.05); border-radius: 12px;">
-                     <h3 style="margin-bottom: 5px;">Analysis Report</h3>
-                     <p style="font-size: 0.9em; opacity: 0.8;">
-                        <strong>Matches Found:</strong> ${results.length}<br>
-                        <strong>Confirmed:</strong> ${highConfidence.length}<br>
-                        <strong>Potential:</strong> ${lowConfidence.length}
-                     </p>
-                </div>
+        function renderEmailTools(q, container) {
+            addSection(container, "🔎 Deep Investigation");
+            addCard(container, "Epieos (Gold Standard)", "Google Account, Maps review, etc.", `https://epieos.com/?q=${q}`);
+            addCard(container, "HaveIBeenPwned", "Check breach status", `https://haveibeenpwned.com/account/${q}`);
+
+            addSection(container, "🔎 Google Dorks");
+            addCard(container, "Public Mentions", "Find where email appears publicly", `https://www.google.com/search?q="${q}"`);
+            addCard(container, "LinkedIn Lookup", "Find associated professional profile", `https://www.google.com/search?q=site:linkedin.com+"${q}"`);
+        }
+
+        function renderPhoneTools(q, container) {
+            addSection(container, "🔎 Reverse Lookup");
+            addCard(container, "TrueCaller", "Global phone directory", `https://www.truecaller.com/search/global/${q}`);
+            addCard(container, "Google Search", "Standard number search", `https://www.google.com/search?q="${q}"`);
+            addCard(container, "WhatsApp Link", "Direct message check", `https://wa.me/${q}`);
+            addCard(container, "Sync.me", "Social Sync Search", `https://sync.me/search/?number=${q}`);
+        }
+
+        function addSection(container, title) {
+            const div = document.createElement('div');
+            div.className = 'section-title';
+            div.style.gridColumn = '1 / -1';
+            div.innerText = title;
+            container.appendChild(div);
+        }
+
+        function addCard(container, title, desc, link) {
+            const a = document.createElement('a');
+            a.className = 'recon-card';
+            a.href = link;
+            a.target = '_blank';
+            a.innerHTML = `
+                <div class="recon-title">${title} <span style="opacity:0.5; font-size:0.8em;">↗</span></div>
+                <div class="recon-desc">${desc}</div>
             `;
-
-            if (highConfidence.length > 0) {
-                html += `<h4 style="grid-column: 1/-1; margin-top: 10px; color: #2ed573;">✅ High Confidence Matches</h4>`;
-                highConfidence.forEach(r => html += createResultCard(r));
-            }
-
-            if (lowConfidence.length > 0) {
-                html += `<h4 style="grid-column: 1/-1; margin-top: 20px; color: #ffc107; border-top: 1px solid rgba(255,255,255,0.1); padding-top: 20px;">⚠️ Unverified / Low Probability</h4>`;
-                lowConfidence.forEach(r => html += createResultCard(r));
-            }
-
-            document.getElementById('resultsContainer').innerHTML = html;
+            container.appendChild(a);
         }
 
-        function createResultCard(r) {
-            const link = r.url || r.link;
-            const siteName = r.url ? (new URL(r.url).hostname.replace('www.', '')) : (r.site || 'Unknown');
-            const isGood = r.good === 'true' || r.rate > 50;
-            const badge = isGood ? 'good' : 'maybe';
-            const score = r.rate ? `${r.rate}%` : (isGood ? 'Found' : '?');
-            const category = r.type || 'Social';
-            const country = r.country ? r.country.toUpperCase() : 'Global';
-
-            return `
-                <div class="result-card">
-                    <div class="result-header">
-                        <div class="result-title" title="${siteName}">${siteName}</div>
-                        <div class="badge-${badge}" style="font-size: 0.8em; padding: 4px 12px;">${score}</div>
-                    </div>
-                    <div style="font-size: 0.75em; color: rgba(255,255,255,0.4); margin-bottom: 8px;">
-                        ${category} • ${country}
-                    </div>
-                    <a href="${link}" target="_blank" class="result-link">${link}</a>
-                </div>
-            `;
-        }
+        // Init with enter key
+        document.getElementById('searchInput').addEventListener('keypress', function (e) {
+            if (e.key === 'Enter') generateReport();
+        });
     </script>
 </body>
 
