@@ -519,7 +519,12 @@
             const results = data.user_info_normal?.data || [];
 
             // FILTERING LOGIC (Strict 90%+)
-            const validResults = results.filter(r => r.good === 'true' || parseFloat(r.rate) >= 90);
+            const validResults = results.filter(r => {
+                const rateStr = String(r.rate);
+                const confidence = parseFloat(rateStr.replace(/[^0-9.]/g, ''));
+                r.cleanRate = confidence;
+                return confidence >= 90;
+            });
 
             // SORTING LOGIC (Major Sites First)
             const priorityList = ['instagram', 'facebook', 'twitter', 'x.com', 'linkedin', 'github', 'tiktok', 'youtube', 'pinterest', 'reddit', 'tinder', 'bumble', 'discord', 'telegram', 'whatsapp'];
