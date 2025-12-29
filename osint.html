@@ -111,7 +111,6 @@
 
         .tab-btn.active {
             background: linear-gradient(135deg, #1d4ed8 0%, #1e40af 100%);
-            /* SERG Blue */
             color: white;
             box-shadow: 0 4px 20px rgba(30, 64, 175, 0.4);
         }
@@ -119,11 +118,13 @@
         .search-controls {
             display: flex;
             gap: 12px;
-            margin-bottom: 30px;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
         }
 
         .search-input-wrapper {
             flex: 1;
+            min-width: 250px;
             position: relative;
         }
 
@@ -143,6 +144,20 @@
             border-color: #3b82f6;
         }
 
+        .depth-select {
+            background: rgba(255, 255, 255, 0.04);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            color: white;
+            border-radius: 28px;
+            padding: 0 24px;
+            outline: none;
+            appearance: none;
+            cursor: pointer;
+            min-width: 140px;
+            height: 56px;
+            /* Match input height */
+        }
+
         .search-btn {
             padding: 18px 40px;
             background: linear-gradient(135deg, #1d4ed8 0%, #172554 100%);
@@ -152,24 +167,55 @@
             font-weight: 700;
             cursor: pointer;
             box-shadow: 0 4px 24px rgba(29, 78, 216, 0.4);
-            transition: transform 0.2s;
+            transition: transform 0.2s, background 0.2s;
+            min-width: 120px;
         }
 
         .search-btn:hover {
             transform: translateY(-2px);
+            background: linear-gradient(135deg, #2563eb 0%, #1e40af 100%);
         }
 
-        /* --- Active Recon Grid --- */
-        .recon-grid {
+        .search-btn:disabled {
+            opacity: 0.7;
+            cursor: wait;
+        }
+
+        /* --- Analysis Output --- */
+        .log-window {
+            background: #000;
+            border: 1px solid #333;
+            border-radius: 12px;
+            padding: 16px;
+            font-family: 'Courier New', monospace;
+            font-size: 0.85em;
+            color: #0f0;
+            height: 120px;
+            overflow-y: auto;
+            margin-bottom: 24px;
+            display: none;
+            box-shadow: inset 0 0 20px rgba(0, 255, 0, 0.1);
+        }
+
+        .log-line {
+            margin-bottom: 4px;
+            opacity: 0.8;
+        }
+
+        .log-line.error {
+            color: #ff4757;
+        }
+
+        .log-line.success {
+            color: #2ed573;
+        }
+
+        /* --- Results Grid --- */
+        .results-grid {
             display: grid;
             grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
             gap: 16px;
             margin-top: 20px;
-            opacity: 0;
-            transform: translateY(10px);
-            animation: fadeIn 0.5s forwards;
-            display: none;
-            /* Hidden until search */
         }
 
         .recon-card {
@@ -181,6 +227,8 @@
             transition: all 0.2s;
             text-decoration: none;
             display: block;
+            position: relative;
+            overflow: hidden;
         }
 
         .recon-card:hover {
@@ -195,7 +243,7 @@
             margin-bottom: 6px;
             display: flex;
             align-items: center;
-            gap: 8px;
+            justify-content: space-between;
         }
 
         .recon-desc {
@@ -203,9 +251,32 @@
             font-size: 0.85em;
         }
 
-        .section-title {
-            width: 100%;
-            text-align: left;
+        .badge {
+            font-size: 0.7em;
+            padding: 2px 8px;
+            border-radius: 12px;
+            text-transform: uppercase;
+            font-weight: 800;
+            letter-spacing: 0.5px;
+        }
+
+        .badge-verified {
+            background: rgba(34, 197, 94, 0.2);
+            color: #4ade80;
+        }
+
+        .badge-manual {
+            background: rgba(59, 130, 246, 0.2);
+            color: #60a5fa;
+        }
+
+        .badge-unverified {
+            background: rgba(234, 179, 8, 0.2);
+            color: #facc15;
+        }
+
+        .section-separator {
+            grid-column: 1 / -1;
             margin-top: 30px;
             margin-bottom: 10px;
             font-size: 0.9em;
@@ -215,13 +286,9 @@
             font-weight: 700;
             border-bottom: 1px solid rgba(255, 255, 255, 0.1);
             padding-bottom: 8px;
-        }
-
-        @keyframes fadeIn {
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
+            display: flex;
+            align-items: center;
+            gap: 10px;
         }
 
         /* Footer */
@@ -277,7 +344,8 @@
                 flex-direction: column;
             }
 
-            .search-btn {
+            .search-btn,
+            .depth-select {
                 width: 100%;
             }
         }
@@ -296,27 +364,34 @@
 
     <div class="glass-container">
         <div class="header" style="margin-bottom: 30px;">
-            <h1>OSINT Deep Search</h1>
-            <p>Professional Active Reconnaissance Tools</p>
+            <h1>OSINT Hybrid Analyzer</h1>
+            <p>Automated Deep Scan + Manual Verification</p>
         </div>
 
         <div class="search-tabs">
             <button class="tab-btn active" data-type="username" onclick="setMode('username')">👤 Username</button>
             <button class="tab-btn" data-type="email" onclick="setMode('email')">📧 Email</button>
-            <button class="tab-btn" data-type="phone" onclick="setMode('phone')">📱 Phone</button>
         </div>
 
         <div class="search-controls">
             <div class="search-input-wrapper">
                 <input type="text" id="searchInput" class="search-input" placeholder="e.g. johndoe (Exact username)">
             </div>
-            <button class="search-btn" onclick="generateReport()">Generate Intel</button>
+
+            <select id="depthSelector" class="depth-select">
+                <option value="100" style="background: #111;">Top 100 Sites</option>
+                <option value="500" style="background: #111;">Top 500 Sites</option>
+                <option value="1000" style="background: #111;">All 1000 Sites</option>
+            </select>
+
+            <button class="search-btn" id="runBtn" onclick="runHybridAnalysis()">Start Scan</button>
         </div>
 
-        <!-- Results / Tools Grid -->
-        <div id="reconGrid" class="recon-grid">
-            <!-- Content Injected via JS -->
-        </div>
+        <!-- Log Window (Hidden by default) -->
+        <div id="processLog" class="log-window"></div>
+
+        <!-- Results Grid -->
+        <div id="resultsGrid" class="results-grid"></div>
 
     </div>
 
@@ -330,6 +405,7 @@
     </div>
 
     <script>
+        const API_URL = 'https://yepzhi-tools.hf.space';
         let currentMode = 'username';
 
         function setMode(mode) {
@@ -338,91 +414,181 @@
             document.querySelector(`[data-type="${mode}"]`).classList.add('active');
 
             const input = document.getElementById('searchInput');
-            if (mode === 'username') input.placeholder = "e.g. johndoe (Exact username)";
-            if (mode === 'email') input.placeholder = "e.g. user@example.com";
-            if (mode === 'phone') input.placeholder = "e.g. 5512345678 (No format)";
+            const depth = document.getElementById('depthSelector');
 
-            // Clear current results to avoid confusion
-            document.getElementById('reconGrid').style.display = 'none';
-        }
-
-        function generateReport() {
-            const query = document.getElementById('searchInput').value.trim();
-            const grid = document.getElementById('reconGrid');
-
-            if (!query) {
-                alert("Please enter a target to investigate.");
-                return;
+            if (mode === 'username') {
+                input.placeholder = "e.g. johndoe (Exact username)";
+                depth.style.display = 'block';
+            } else if (mode === 'email') {
+                input.placeholder = "e.g. user@example.com";
+                depth.style.display = 'none'; // Email usually doesn't need depth selector for this
             }
 
+            // Clear current results
+            document.getElementById('resultsGrid').innerHTML = '';
+            document.getElementById('processLog').style.display = 'none';
+        }
+
+        // Logger
+        function log(message, type = 'info') {
+            const logWindow = document.getElementById('processLog');
+            logWindow.style.display = 'block';
+            const line = document.createElement('div');
+            line.className = `log-line ${type}`;
+            line.innerText = `> ${message}`;
+            logWindow.appendChild(line);
+            logWindow.scrollTop = logWindow.scrollHeight;
+        }
+
+        async function runHybridAnalysis() {
+            const query = document.getElementById('searchInput').value.trim();
+            const btn = document.getElementById('runBtn');
+            const grid = document.getElementById('resultsGrid');
+
+            if (!query) { alert("Please enter a target."); return; }
+
+            // Reset
             grid.innerHTML = '';
-            grid.style.display = 'grid';
+            document.getElementById('processLog').innerHTML = '';
+            btn.disabled = true;
+            btn.innerText = "Scanning...";
+
+            // 1. Render Manual Tools IMMEDIATELY (Hybrid)
+            renderManualSection(query, grid);
+
+            // 2. Start Backend Scan
+            if (currentMode === 'username') {
+                try {
+                    await runBackendScan(query, grid);
+                } catch (e) {
+                    log(`Backend Error: ${e.message}. Using manual tools only.`, 'error');
+                }
+            } else {
+                log("Automated scan only available for Usernames currently. Use verification tools below.", 'info');
+            }
+
+            btn.disabled = false;
+            btn.innerText = "Start Scan";
+        }
+
+        async function runBackendScan(query, grid) {
+            const depth = document.getElementById('depthSelector').value;
+            const uuid = 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, c => {
+                var r = Math.random() * 16 | 0, v = c == 'x' ? r : (r & 0x3 | 0x8);
+                return v.toString(16);
+            });
+
+            log(`Connecting to scan engine (${depth} sites)...`);
+
+            // Fetch Settings to get site list
+            const settingsRes = await fetch(`${API_URL}/get_settings`);
+            if (!settingsRes.ok) throw new Error("Backend offline");
+            const settings = await settingsRes.json();
+
+            // Config Scope
+            let sites = settings.websites || [];
+            sites.sort((a, b) => (a.global_rank || 999999) - (b.global_rank || 999999));
+            const selectedSites = sites.slice(0, depth);
+            const inputIds = selectedSites.map(s => s.index).join(',');
+
+            // Save Scope
+            await fetch(`${API_URL}/save_settings`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    websites: inputIds,
+                    google_key: settings.google?.[0] || '',
+                    google_cv: settings.google?.[1] || '',
+                    user_agent: settings.user_agent,
+                    proxy: settings.proxy
+                })
+            });
+
+            log(`Scope set. Launching scan for "${query}"...`);
+
+            // Execute
+            const res = await fetch(`${API_URL}/analyze_string`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ string: query, option: 'FindUserProfilesFast', uuid: uuid })
+            });
+
+            if (!res.ok) throw new Error(`Scan failed (${res.status})`);
+
+            const data = await res.json();
+            const results = data.user_info_normal?.data || [];
+
+            // FILTERING LOGIC
+            const verified = results.filter(r => r.good === 'true' || r.rate >= 60); // High confidence
+            const unverified = results.filter(r => r.good !== 'true' && r.rate < 60);
+
+            log(`Scan Complete: ${verified.length} confirmed, ${unverified.length} potential.`);
+
+            // Append Standard Results
+            if (verified.length > 0) {
+                addSeparator(grid, `✅ Automated Hits (High Confidence)`);
+                verified.forEach(r => addResultCard(grid, r, 'verified'));
+            } else {
+                log("No high confidence matches found by automation.", 'info');
+            }
+
+            if (unverified.length > 0) {
+                addSeparator(grid, `⚠️ Potential Matches (Verify Manually)`);
+                unverified.forEach(r => addResultCard(grid, r, 'unverified'));
+            }
+        }
+
+        function renderManualSection(q, container) {
+            addSeparator(container, `⚡ Active Recon Tools (Manual Verify)`);
 
             if (currentMode === 'username') {
-                renderUsernameTools(query, grid);
-            } else if (currentMode === 'email') {
-                renderEmailTools(query, grid);
-            } else if (currentMode === 'phone') {
-                renderPhoneTools(query, grid);
+                addCard(container, "Google Dorks", "Advanced Search", `https://www.google.com/search?q=site:instagram.comOr+site:twitter.com+OR+site:facebook.com+OR+site:linkedin.com+"${q}"`, 'manual');
+                addCard(container, "WhatsMyName.app", "Deep Check", `https://whatsmyname.app/?q=${q}`, 'manual');
+                addCard(container, "Epieos Email", "If you find an email", `https://epieos.com/`, 'manual');
+            } else {
+                addCard(container, "Epieos", "Deep Email Scan", `https://epieos.com/?q=${q}`, 'manual');
+                addCard(container, "HaveIBeenPwned", "Breach Check", `https://haveibeenpwned.com/account/${q}`, 'manual');
+                addCard(container, "Google Search", "Public Mentions", `https://www.google.com/search?q="${q}"`, 'manual');
             }
         }
 
-        function renderUsernameTools(q, container) {
-            // Google Dorks
-            addSection(container, "🔎 Google Dorks (Passive Recon)");
-            addCard(container, "Social Networks", "Search top social sites", `https://www.google.com/search?q=site:instagram.comOr+site:twitter.com+OR+site:facebook.com+OR+site:linkedin.com+"${q}"`);
-            addCard(container, "Exact Profile Match", "Force exact username match", `https://www.google.com/search?q=inurl:${q}`);
-            addCard(container, "Documents / Leaks", "Search for PDF/DOC/TXT files", `https://www.google.com/search?q="${q}"+filetype:pdf+OR+filetype:doc+OR+filetype:txt`);
-            addCard(container, "Pastebin / Text Dumps", "Search data leaks", `https://www.google.com/search?q=site:pastebin.com+"${q}"`);
-
-            // Verification Tools
-            addSection(container, "⚡ Verification Tools (Active Recon)");
-            addCard(container, "WhatsMyName.app", "Check 500+ sites (Best Choice)", `https://whatsmyname.app/?q=${q}`);
-            addCard(container, "NameCheckup", "Availability checker", `https://namecheckup.com/`);
-            addCard(container, "Sherlock Cloud", "Run Sherlock on CloudShell", `https://shell.cloud.google.com/?show=ide%2Cterminal`);
-        }
-
-        function renderEmailTools(q, container) {
-            addSection(container, "🔎 Deep Investigation");
-            addCard(container, "Epieos (Gold Standard)", "Google Account, Maps review, etc.", `https://epieos.com/?q=${q}`);
-            addCard(container, "HaveIBeenPwned", "Check breach status", `https://haveibeenpwned.com/account/${q}`);
-
-            addSection(container, "🔎 Google Dorks");
-            addCard(container, "Public Mentions", "Find where email appears publicly", `https://www.google.com/search?q="${q}"`);
-            addCard(container, "LinkedIn Lookup", "Find associated professional profile", `https://www.google.com/search?q=site:linkedin.com+"${q}"`);
-        }
-
-        function renderPhoneTools(q, container) {
-            addSection(container, "🔎 Reverse Lookup");
-            addCard(container, "TrueCaller", "Global phone directory", `https://www.truecaller.com/search/global/${q}`);
-            addCard(container, "Google Search", "Standard number search", `https://www.google.com/search?q="${q}"`);
-            addCard(container, "WhatsApp Link", "Direct message check", `https://wa.me/${q}`);
-            addCard(container, "Sync.me", "Social Sync Search", `https://sync.me/search/?number=${q}`);
-        }
-
-        function addSection(container, title) {
+        function addSeparator(container, title) {
             const div = document.createElement('div');
-            div.className = 'section-title';
-            div.style.gridColumn = '1 / -1';
+            div.className = 'section-separator';
             div.innerText = title;
             container.appendChild(div);
         }
 
-        function addCard(container, title, desc, link) {
+        function addCard(container, title, desc, link, type) {
             const a = document.createElement('a');
             a.className = 'recon-card';
             a.href = link;
             a.target = '_blank';
+
+            let badgeClass = type === 'verified' ? 'badge-verified' : (type === 'manual' ? 'badge-manual' : 'badge-unverified');
+            let badgeText = type.toUpperCase();
+
             a.innerHTML = `
-                <div class="recon-title">${title} <span style="opacity:0.5; font-size:0.8em;">↗</span></div>
+                <div class="recon-title">
+                    ${title} 
+                    <span class="badge ${badgeClass}">${badgeText}</span>
+                </div>
                 <div class="recon-desc">${desc}</div>
             `;
             container.appendChild(a);
         }
 
-        // Init with enter key
+        function addResultCard(container, r, type) {
+            const link = r.url || r.link;
+            const siteName = r.url ? (new URL(r.url).hostname.replace('www.', '')) : (r.site || 'Unknown');
+
+            // Format for automation results
+            addCard(container, siteName, `Confidence: ${r.rate || '?'}%`, link, type);
+        }
+
+        // Init
         document.getElementById('searchInput').addEventListener('keypress', function (e) {
-            if (e.key === 'Enter') generateReport();
+            if (e.key === 'Enter') runHybridAnalysis();
         });
     </script>
 </body>
