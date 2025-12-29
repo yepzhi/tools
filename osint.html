@@ -606,13 +606,16 @@
                 siteName = r.site || 'Site';
             }
 
-            // Re-labeling to avoid confusion
-            let badgeColor = 'badge-unverified'; // Yellow by default
-            let badgeText = 'POTENTIAL';
+            // Use Cleaned Rate
+            const confidence = r.cleanRate || 0;
 
-            if (r.rate >= 80) {
-                badgeText = 'HIGH SIGNAL';
-                badgeColor = 'badge-verified';
+            // Re-labeling to avoid confusion
+            let badgeColor = 'badge-verified';
+            let badgeText = 'HIGH SIGNAL';
+
+            if (confidence < 90) {
+                badgeText = 'POTENTIAL';
+                badgeColor = 'badge-unverified';
             }
 
             const a = document.createElement('a');
@@ -626,7 +629,7 @@
                     <span class="badge ${badgeColor}">${badgeText}</span>
                 </div>
                 <div class="recon-desc" style="display:flex; justify-content:space-between; align-items:center;">
-                    <span>Confidence: ${r.rate}%</span>
+                    <span>Confidence: ${confidence}%</span>
                     <span style="color:#3b82f6; font-weight:bold; font-size:0.9em;">Verify ↗</span>
                 </div>
             `;
