@@ -580,10 +580,38 @@
 
         function addResultCard(container, r, type) {
             const link = r.url || r.link;
-            const siteName = r.url ? (new URL(r.url).hostname.replace('www.', '')) : (r.site || 'Unknown');
+            let siteName = 'Unknown';
+            try {
+                siteName = new URL(link).hostname.replace('www.', '');
+            } catch (e) {
+                siteName = r.site || 'Site';
+            }
 
-            // Format for automation results
-            addCard(container, siteName, `Confidence: ${r.rate || '?'}%`, link, type);
+            // Re-labeling to avoid confusion
+            let badgeColor = 'badge-unverified'; // Yellow by default
+            let badgeText = 'POTENTIAL';
+
+            if (r.rate >= 80) {
+                badgeText = 'HIGH SIGNAL';
+                badgeColor = 'badge-verified';
+            }
+
+            const a = document.createElement('a');
+            a.className = 'recon-card';
+            a.href = link;
+            a.target = '_blank';
+
+            a.innerHTML = `
+                <div class="recon-title">
+                    ${siteName} 
+                    <span class="badge ${badgeColor}">${badgeText}</span>
+                </div>
+                <div class="recon-desc" style="display:flex; justify-content:space-between; align-items:center;">
+                    <span>Confidence: ${r.rate}%</span>
+                    <span style="color:#3b82f6; font-weight:bold; font-size:0.9em;">Verify ↗</span>
+                </div>
+            `;
+            container.appendChild(a);
         }
 
         // Init
