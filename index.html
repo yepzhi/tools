@@ -131,13 +131,41 @@
             color: #667eea;
             text-decoration: none;
         }
+
+        /* Reveal Animation */
+        .reveal-overlay {
+            position: fixed;
+            inset: 0;
+            background-color: #000;
+            z-index: 9999;
+            animation: reveal-fade 1.5s ease-in-out forwards;
+            pointer-events: none;
+        }
+
+        @keyframes reveal-fade {
+            0% {
+                opacity: 1;
+            }
+
+            40% {
+                opacity: 1;
+            }
+
+            /* Hold black for a moment */
+            100% {
+                opacity: 0;
+            }
+        }
     </style>
 </head>
 
 <body>
+    <!-- Black Reveal Overlay -->
+    <div class="reveal-overlay"></div>
+
     <!-- Header -->
     <div
-        style="width: 100%; max-width: 920px; display: flex; justify-content: space-between; align-items: center; margin-bottom: 40px; padding: 0 10px;">
+        style="width: 100%; max-width: 920px; display: flex; justify-content: space-between; align-items: center; margin-bottom: 40px; padding: 0 10px; opacity: 0; animation: content-fade-in 1s ease-out 0.8s forwards;">
         <a href="https://yepzhi.com"
             style="color: rgba(255,255,255,0.7); text-decoration: none; display: flex; align-items: center; gap: 8px; font-weight: 500; transition: color 0.2s;">
             <span>‹</span> Back to Home
