@@ -518,23 +518,37 @@
             const data = await res.json();
             const results = data.user_info_normal?.data || [];
 
-            // FILTERING LOGIC
-            const verified = results.filter(r => r.good === 'true' || r.rate >= 60); // High confidence
-            const unverified = results.filter(r => r.good !== 'true' && r.rate < 60);
+            // FILTERING LOGIC (Strict 90%+)
+            const validResults = results.filter(r => r.good === 'true' || parseFloat(r.rate) >= 90);
 
-            log(`Scan Complete: ${verified.length} confirmed, ${unverified.length} potential.`);
+            // SORTING LOGIC (Major Sites First)
+            const priorityList = ['instagram', 'facebook', 'twitter', 'x.com', 'linkedin', 'github', 'tiktok', 'youtube', 'pinterest', 'reddit', 'tinder', 'bumble', 'discord', 'telegram', 'whatsapp'];
 
-            // Append Standard Results
-            if (verified.length > 0) {
-                addSeparator(grid, `✅ Automated Hits (High Confidence)`);
-                verified.forEach(r => addResultCard(grid, r, 'verified'));
+            validResults.sort((a, b) => {
+                const linkA = (a.url || a.link || '').toLowerCase();
+                const linkB = (b.url || b.link || '').toLowerCase();
+
+                const idxA = priorityList.findIndex(p => linkA.includes(p));
+                const idxB = priorityList.findIndex(p => linkB.includes(p));
+
+                // If both are priority sites, sort by priority order
+                if (idxA !== -1 && idxB !== -1) return idxA - idxB;
+                // If A is priority, it goes first
+                if (idxA !== -1) return -1;
+                // If B is priority, it goes first
+                if (idxB !== -1) return 1;
+
+                return 0; // Keep original order for others
+            });
+
+            log(`Scan Complete: ${validResults.length} high-confidence matches found.`);
+
+            if (validResults.length > 0) {
+                addSeparator(grid, `✅ Verified Signals (High Confidence)`);
+                validResults.forEach(r => addResultCard(grid, r, 'verified'));
             } else {
-                log("No high confidence matches found by automation.", 'info');
-            }
-
-            if (unverified.length > 0) {
-                addSeparator(grid, `⚠️ Potential Matches (Verify Manually)`);
-                unverified.forEach(r => addResultCard(grid, r, 'unverified'));
+                log("No 100% matches found. Try Manual Tools.", 'info');
+                grid.innerHTML += `<div style="grid-column:1/-1; text-align:center; padding:20px; color:#fff; opacity:0.5;">No high-confidence automated matches. Use manual tools above.</div>`;
             }
         }
 
