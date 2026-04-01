@@ -267,6 +267,17 @@
             filter: drop-shadow(0 0 10px rgba(167, 139, 250, 0.4));
             font-size: 1.4em;
         }
+        /* LOT Marketplace - Cyan to Pink */
+        .lot-text {
+            background: linear-gradient(90deg, #7DF9FF, #FF6BF8);
+            background-clip: text;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            font-weight: 900;
+            letter-spacing: -1px;
+            filter: drop-shadow(0 0 10px rgba(125, 249, 255, 0.4));
+            font-size: 1.4em;
+        }
     </style>
 </head>
 
@@ -288,12 +299,18 @@
 
     <!-- Modules Navigation -->
     <div class="modules-grid">
+        <!-- LOT Marketplace -->
+        <a href="https://yepzhi.com/lot" class="module-card" 
+            style="border-color: rgba(125, 249, 255, 0.3); background: linear-gradient(135deg, rgba(125,249,255,0.05), rgba(255,107,248,0.05));">
+            <div class="module-icon">🏷️</div>
+            <h3 class="module-title"><span class="lot-text">LOT Marketplace</span></h3>
+            <p class="module-desc">Compra, Vende, Conecta en HMO</p>
+        </a>
+
         <!-- Neosys Aeon -->
-        <a href="https://yepzhi.com/neosys/" class="module-card">
+        <a href="https://yepzhi.com/neosys" class="module-card">
             <div class="module-icon">✨</div>
-            <h3 class="module-title">
-                <span class="neosys-text">Neosys Aeon</span>
-            </h3>
+            <h3 class="module-title"><span class="neosys-text">Neosys Aeon</span></h3>
             <p class="module-desc">Applied Scientific Framework</p>
         </a>
 
@@ -313,15 +330,8 @@
             <p class="module-desc">Higher Ed Research Report</p>
         </a>
 
-        <!-- OSINT -->
-        <a href="osint.html" class="module-card">
-            <div class="module-icon">🔍</div>
-            <h3 class="module-title">OSINT Analyzer</h3>
-            <p class="module-desc">Deep profile search engine</p>
-        </a>
-
         <!-- WebCert -->
-        <a href="webcert.html" class="module-card">
+        <a href="webcert" class="module-card">
             <div class="module-icon">📜</div>
             <h3 class="module-title">WebCert Generator</h3>
             <p class="module-desc">Create digital certificates</p>
@@ -341,15 +351,11 @@
             <p class="module-desc">AI Support Assistant</p>
         </a>
 
-
-
         <!-- hopRadio -->
-        <a href="https://yepzhi.github.io/hopRadio/" class="module-card"
-            style="justify-content: center; padding-top: 30px;">
+        <a href="https://yepzhi.github.io/hopRadio/" class="module-card" style="justify-content: center; padding-top: 30px;">
             <div class="module-icon">&#128266;</div>
             <h3 class="module-title">
-                <span class="hop-text" style="font-size: 1.3em;">hopRadio</span> <span class="live-text"
-                    style="font-size: 1.3em;">Live</span>
+                <span class="hop-text" style="font-size: 1.3em;">hopRadio</span> <span class="live-text" style="font-size: 1.3em;">Live</span>
             </h3>
             <p class="module-desc">Live Music Station</p>
         </a>
@@ -358,8 +364,7 @@
         <a href="https://yepzhi.com/SERGRadio/" class="module-card" style="justify-content: center; padding-top: 30px;">
             <div class="module-icon">&#129705;</div>
             <h3 class="module-title">
-                <span class="serg-blue-text" style="font-size: 1.3em;">SERG</span><span class="serg-radio-text"
-                    style="font-size: 1.3em;">Radio</span>
+                <span class="serg-blue-text" style="font-size: 1.3em;">SERG</span><span class="serg-radio-text" style="font-size: 1.3em;">Radio</span>
             </h3>
             <p class="module-desc">Live Music Station</p>
         </a>
@@ -372,11 +377,9 @@
         </a>
 
         <!-- EventSeeker -->
-        <a href="https://yepzhi.com/eventseeker/" class="module-card">
+        <a href="https://yepzhi.com/eventseeker" class="module-card">
             <div class="module-icon">🎉</div>
-            <h3 class="module-title">
-                <span class="es-text">EventSeeker</span>
-            </h3>
+            <h3 class="module-title"><span class="es-text">EventSeeker</span></h3>
             <p class="module-desc">Curated Events (AZ/SON/BC)</p>
         </a>
 
@@ -385,6 +388,13 @@
             <div class="module-icon">⬇️</div>
             <h3 class="module-title">ytDownloader</h3>
             <p class="module-desc">HQ Audio/Video Downloader</p>
+        </a>
+
+        <!-- OSINT -->
+        <a href="osint" class="module-card">
+            <div class="module-icon">🔍</div>
+            <h3 class="module-title">OSINT Analyzer</h3>
+            <p class="module-desc">Deep profile search engine</p>
         </a>
     </div>
 
